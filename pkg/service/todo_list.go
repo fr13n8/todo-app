@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/fr13n8/todo-app"
 	"github.com/fr13n8/todo-app/pkg/repository"
 )
@@ -26,10 +28,16 @@ func (s *TodoListService) GetById(listId int, userId int) (todo.TodoList, error)
 }
 
 func (s *TodoListService) Delete(listId int, userId int) error {
+	if _, err := s.repo.GetById(listId, userId); err != nil {
+		return errors.New("record not found")
+	}
 	return s.repo.Delete(listId, userId)
 }
 
 func (s *TodoListService) Update(listId int, userId int, input todo.UpdateListInput) error {
+	if _, err := s.repo.GetById(listId, userId); err != nil {
+		return errors.New("record not found")
+	}
 	if err := input.Validate(); err != nil {
 		return err
 	}
