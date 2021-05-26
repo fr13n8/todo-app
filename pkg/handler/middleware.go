@@ -23,7 +23,7 @@ func (h *Handler) userIdentity(c *gin.Context) {
 
 	splitToken := strings.Split(header, "Bearer ")
 	if len(splitToken) != 2 {
-		newReponseError(c, http.StatusUnauthorized, errors.New("Broken auth token!"))
+		newReponseError(c, http.StatusUnauthorized, errors.New("broken auth token"))
 		return
 	}
 	token := splitToken[1]
@@ -35,5 +35,20 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	}
 
 	c.Set(userCtx, userId)
+}
 
+func getUserId(c *gin.Context) (int, error) {
+	id, ok := c.Get(userCtx)
+	if !ok {
+		newReponseError(c, http.StatusInternalServerError, errors.New("user id not found"))
+		return 0, errors.New("user id not found")
+	}
+
+	idInt, ok := id.(int)
+	if !ok {
+		newReponseError(c, http.StatusInternalServerError, errors.New("invalid user id type"))
+		return 0, errors.New("invalid user id type")
+	}
+
+	return idInt, nil
 }
