@@ -12,13 +12,13 @@ func (h *Handler) signUp(c *gin.Context) {
 	var input todo.User
 
 	if err := c.BindJSON(&input); err != nil {
-		newReponseError(c, http.StatusBadRequest, errors.New("invalid input body"))
+		newResponseError(c, http.StatusBadRequest, errors.New("invalid input body"))
 		return
 	}
 
 	id, err := h.services.CreateUser(input)
 	if err != nil {
-		newReponseError(c, http.StatusInternalServerError, err)
+		newResponseError(c, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -30,13 +30,13 @@ func (h *Handler) signIn(c *gin.Context) {
 	var input todo.SignInInput
 
 	if err := c.BindJSON(&input); err != nil {
-		newReponseError(c, http.StatusBadRequest, errors.New("invalid input body"))
+		newResponseError(c, http.StatusBadRequest, errors.New("invalid input body"))
 		return
 	}
 
 	token, err := h.services.GenerateToken(input.UserName, input.Password)
 	if err != nil {
-		newReponseError(c, http.StatusInternalServerError, err)
+		newResponseError(c, http.StatusInternalServerError, err)
 		return
 	}
 

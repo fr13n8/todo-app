@@ -16,19 +16,19 @@ func (h *Handler) createItem(c *gin.Context) {
 
 	listId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		newReponseError(c, http.StatusBadRequest, err)
+		newResponseError(c, http.StatusBadRequest, err)
 		return
 	}
 
-	var input todo.TodoItem
+	var input todo.Item
 	if err := c.BindJSON(&input); err != nil {
-		newReponseError(c, http.StatusBadRequest, err)
+		newResponseError(c, http.StatusBadRequest, err)
 		return
 	}
 
 	id, err := h.services.TodoItem.Create(listId, userId, input)
 	if err != nil {
-		newReponseError(c, http.StatusInternalServerError, err)
+		newResponseError(c, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -36,7 +36,7 @@ func (h *Handler) createItem(c *gin.Context) {
 }
 
 type getAllItemsResponse struct {
-	Data []todo.TodoItem `json:"data"`
+	Data []todo.Item `json:"data"`
 }
 
 func (h *Handler) getAllItems(c *gin.Context) {
@@ -47,13 +47,13 @@ func (h *Handler) getAllItems(c *gin.Context) {
 
 	listId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		newReponseError(c, http.StatusBadRequest, err)
+		newResponseError(c, http.StatusBadRequest, err)
 		return
 	}
 
 	items, err := h.services.TodoItem.GetAll(listId, userId)
 	if err != nil {
-		newReponseError(c, http.StatusInternalServerError, err)
+		newResponseError(c, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -63,7 +63,7 @@ func (h *Handler) getAllItems(c *gin.Context) {
 }
 
 type getItemResponse struct {
-	Data todo.TodoItem `json:"data"`
+	Data todo.Item `json:"data"`
 }
 
 func (h *Handler) getItemById(c *gin.Context) {
@@ -74,13 +74,13 @@ func (h *Handler) getItemById(c *gin.Context) {
 
 	itemId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		newReponseError(c, http.StatusBadRequest, err)
+		newResponseError(c, http.StatusBadRequest, err)
 		return
 	}
 
 	item, err := h.services.TodoItem.GetById(userId, itemId)
 	if err != nil {
-		newReponseError(c, http.StatusInternalServerError, err)
+		newResponseError(c, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -98,17 +98,17 @@ func (h *Handler) updateItem(c *gin.Context) {
 
 	itemId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		newReponseError(c, http.StatusBadRequest, err)
+		newResponseError(c, http.StatusBadRequest, err)
 		return
 	}
 
 	if err := c.BindJSON(&input); err != nil {
-		newReponseError(c, http.StatusBadRequest, err)
+		newResponseError(c, http.StatusBadRequest, err)
 		return
 	}
 
 	if err := h.services.TodoItem.Update(userId, itemId, input); err != nil {
-		newReponseError(c, http.StatusInternalServerError, err)
+		newResponseError(c, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -125,13 +125,13 @@ func (h *Handler) deleteItem(c *gin.Context) {
 
 	itemId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		newReponseError(c, http.StatusBadRequest, err)
+		newResponseError(c, http.StatusBadRequest, err)
 		return
 	}
 
 	err = h.services.TodoItem.Delete(userId, itemId)
 	if err != nil {
-		newReponseError(c, http.StatusInternalServerError, err)
+		newResponseError(c, http.StatusInternalServerError, err)
 		return
 	}
 

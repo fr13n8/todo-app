@@ -16,7 +16,7 @@ func NewTodoItemPostgres(db *sqlx.DB) *TodoItemPostgres {
 	return &TodoItemPostgres{db: db}
 }
 
-func (r *TodoItemPostgres) Create(listId int, input todo.TodoItem) (int, error) {
+func (r *TodoItemPostgres) Create(listId int, input todo.Item) (int, error) {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return 0, err
@@ -27,22 +27,28 @@ func (r *TodoItemPostgres) Create(listId int, input todo.TodoItem) (int, error) 
 	row := tx.QueryRow(createItemQuery, input.Title, input.Description)
 	err = row.Scan(&itemId)
 	if err != nil {
-		tx.Rollback()
+		rolError := tx.Rollback()
+		if rolError != nil {
+			return 0, rolError
+		}
 		return 0, err
 	}
 
 	createListItemsQuery := fmt.Sprintf("INSERT INTO %s (list_id, item_id) VALUES($1, $2) RETURNING id", listsItemsTable)
 	_, err = tx.Exec(createListItemsQuery, listId, itemId)
 	if err != nil {
-		tx.Rollback()
+		rolError := tx.Rollback()
+		if rolError != nil {
+			return 0, rolError
+		}
 		return 0, err
 	}
 
 	return itemId, tx.Commit()
 }
 
-func (r *TodoItemPostgres) GetAll(listId int, userId int) ([]todo.TodoItem, error) {
-	var items []todo.TodoItem
+func (r *TodoItemPostgres) GetAll(listId int, userId int) ([]todo.Item, error) {
+	var items []todo.Item
 
 	query := fmt.Sprintf(`SELECT ti.id, ti.title, ti.description, ti.done FROM %s ti 
 							INNER JOIN %s li on li.item_id=ti.id
@@ -55,8 +61,8 @@ func (r *TodoItemPostgres) GetAll(listId int, userId int) ([]todo.TodoItem, erro
 	return items, nil
 }
 
-func (r *TodoItemPostgres) GetById(userId int, itemId int) (todo.TodoItem, error) {
-	var item todo.TodoItem
+func (r *TodoItemPostgres) GetById(userId int, itemId int) (todo.Item, error) {
+	var item todo.Item
 
 	query := fmt.Sprintf(`SELECT ti.id, ti.title, ti.description, ti.done FROM %s ti 
 							INNER JOIN %s li on li.item_id=ti.id

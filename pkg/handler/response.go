@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func newReponseError(c *gin.Context, status int, err error) {
+func newResponseError(c *gin.Context, status int, err error) {
 	er := HTTPError{
 		Message: err.Error(),
 	}

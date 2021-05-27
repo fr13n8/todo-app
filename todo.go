@@ -2,7 +2,7 @@ package todo
 
 import "errors"
 
-type TodoList struct {
+type List struct {
 	Id          int    `json:"id" db:"id"`
 	Title       string `json:"title" binding:"required" db:"title"`
 	Description string `json:"description" db:"description"`
@@ -14,7 +14,7 @@ type UsersList struct {
 	ListId int
 }
 
-type TodoItem struct {
+type Item struct {
 	Id          int    `json:"id" db:"id"`
 	Title       string `json:"title" binding:"required" db:"title"`
 	Description string `json:"description" db:"description"`

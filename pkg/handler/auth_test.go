@@ -8,14 +8,14 @@ import (
 
 	"github.com/fr13n8/todo-app"
 	"github.com/fr13n8/todo-app/pkg/service"
-	mock_service "github.com/fr13n8/todo-app/pkg/service/mocks"
+	mockservice "github.com/fr13n8/todo-app/pkg/service/mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
-	"github.com/magiconair/properties/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestHandler_signUp(t *testing.T) {
-	type mockBehavior func(s *mock_service.MockAuthorization, user todo.User)
+	type mockBehavior func(s *mockservice.MockAuthorization, user todo.User)
 
 	testTable := []struct {
 		name                 string
@@ -33,7 +33,7 @@ func TestHandler_signUp(t *testing.T) {
 				UserName: "test",
 				Password: "test",
 			},
-			mockBehavior: func(r *mock_service.MockAuthorization, user todo.User) {
+			mockBehavior: func(r *mockservice.MockAuthorization, user todo.User) {
 				r.EXPECT().CreateUser(user).Return(1, nil)
 			},
 			expectedStatusCode:   200,
@@ -42,7 +42,7 @@ func TestHandler_signUp(t *testing.T) {
 		{
 			name:                 "Empty fields",
 			inputBody:            `{"username": "test", "password": "test"}`,
-			mockBehavior:         func(r *mock_service.MockAuthorization, user todo.User) {},
+			mockBehavior:         func(r *mockservice.MockAuthorization, user todo.User) {},
 			expectedStatusCode:   400,
 			expectedResponseBody: `{"message":"invalid input body"}`,
 		},
@@ -54,7 +54,7 @@ func TestHandler_signUp(t *testing.T) {
 				UserName: "test",
 				Password: "test",
 			},
-			mockBehavior: func(r *mock_service.MockAuthorization, user todo.User) {
+			mockBehavior: func(r *mockservice.MockAuthorization, user todo.User) {
 				r.EXPECT().CreateUser(user).Return(1, errors.New("service failure"))
 			},
 			expectedStatusCode:   500,
@@ -68,7 +68,7 @@ func TestHandler_signUp(t *testing.T) {
 			c := gomock.NewController(t)
 			defer c.Finish()
 
-			auth := mock_service.NewMockAuthorization(c)
+			auth := mockservice.NewMockAuthorization(c)
 			testCase.mockBehavior(auth, testCase.inputUser)
 
 			services := &service.Service{Authorization: auth}
@@ -93,7 +93,7 @@ func TestHandler_signUp(t *testing.T) {
 }
 
 func TestHandler_signIn(t *testing.T) {
-	type mockBehavior func(s *mock_service.MockAuthorization, user todo.SignInInput)
+	type mockBehavior func(s *mockservice.MockAuthorization, user todo.SignInInput)
 
 	testTable := []struct {
 		name                 string
@@ -110,16 +110,16 @@ func TestHandler_signIn(t *testing.T) {
 				UserName: "test",
 				Password: "test",
 			},
-			mockBehavior: func(r *mock_service.MockAuthorization, user todo.SignInInput) {
+			mockBehavior: func(r *mockservice.MockAuthorization, user todo.SignInInput) {
 				r.EXPECT().GenerateToken(user.UserName, user.Password).Return("token", nil)
 			},
 			expectedStatusCode:   200,
 			expectedResponseBody: `{"token":"token"}`,
 		},
 		{
-			name:                 "Empty fileds",
+			name:                 "Empty fields",
 			inputBody:            `{"username": "test"}`,
-			mockBehavior:         func(r *mock_service.MockAuthorization, user todo.SignInInput) {},
+			mockBehavior:         func(r *mockservice.MockAuthorization, user todo.SignInInput) {},
 			expectedStatusCode:   400,
 			expectedResponseBody: `{"message":"invalid input body"}`,
 		},
@@ -130,7 +130,7 @@ func TestHandler_signIn(t *testing.T) {
 				UserName: "test",
 				Password: "test",
 			},
-			mockBehavior: func(r *mock_service.MockAuthorization, user todo.SignInInput) {
+			mockBehavior: func(r *mockservice.MockAuthorization, user todo.SignInInput) {
 				r.EXPECT().GenerateToken(user.UserName, user.Password).Return("token", errors.New("service failure"))
 			},
 			expectedStatusCode:   500,
@@ -143,13 +143,13 @@ func TestHandler_signIn(t *testing.T) {
 			c := gomock.NewController(t)
 			defer c.Finish()
 
-			auth := mock_service.NewMockAuthorization(c)
+			auth := mockservice.NewMockAuthorization(c)
 			testCase.mockBehavior(auth, testCase.inputUser)
 
-			service := &service.Service{
+			s := &service.Service{
 				Authorization: auth,
 			}
-			handler := NewHandler(service)
+			handler := NewHandler(s)
 
 			r := gin.New()
 			r.POST("/sign-in", handler.signIn)

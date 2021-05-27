@@ -14,17 +14,17 @@ type Authorization interface {
 }
 
 type TodoList interface {
-	Create(userId int, list todo.TodoList) (int, error)
-	GetAll(userId int) ([]todo.TodoList, error)
-	GetById(listId int, userId int) (todo.TodoList, error)
+	Create(userId int, list todo.List) (int, error)
+	GetAll(userId int) ([]todo.List, error)
+	GetById(listId int, userId int) (todo.List, error)
 	Delete(listId int, userId int) error
 	Update(listId int, userId int, list todo.UpdateListInput) error
 }
 
 type TodoItem interface {
-	Create(listId int, userId int, input todo.TodoItem) (int, error)
-	GetAll(listId int, userId int) ([]todo.TodoItem, error)
-	GetById(userId int, itemId int) (todo.TodoItem, error)
+	Create(listId int, userId int, input todo.Item) (int, error)
+	GetAll(listId int, userId int) ([]todo.Item, error)
+	GetById(userId int, itemId int) (todo.Item, error)
 	Delete(userId int, itemId int) error
 	Update(userId int, itemId int, input todo.UpdateItemInput) error
 }

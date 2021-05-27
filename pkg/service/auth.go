@@ -13,7 +13,6 @@ import (
 const (
 	cost       = 10
 	signingKey = "qrkjk#4#%35FSFJlja#4353KSFjH"
-	tokenTTL   = 12
 )
 
 type AuthService struct {

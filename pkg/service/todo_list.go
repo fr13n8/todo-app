@@ -15,15 +15,15 @@ func NewTodoListService(repo repository.TodoList) *TodoListService {
 	return &TodoListService{repo: repo}
 }
 
-func (s *TodoListService) Create(userId int, list todo.TodoList) (int, error) {
+func (s *TodoListService) Create(userId int, list todo.List) (int, error) {
 	return s.repo.Create(userId, list)
 }
 
-func (s *TodoListService) GetAll(userId int) ([]todo.TodoList, error) {
+func (s *TodoListService) GetAll(userId int) ([]todo.List, error) {
 	return s.repo.GetAll(userId)
 }
 
-func (s *TodoListService) GetById(listId int, userId int) (todo.TodoList, error) {
+func (s *TodoListService) GetById(listId int, userId int) (todo.List, error) {
 	return s.repo.GetById(listId, userId)
 }
 
