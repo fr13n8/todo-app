@@ -34,31 +34,31 @@ func TestTodoItemPostgres_Create(t *testing.T) {
 		wantId       int
 		wantErr      bool
 	}{
-		// {
-		// 	name: "OK",
-		// 	input: input{
-		// 		listId: 1,
-		// 		item: todo.Item{
-		// 			Title:       "Test title",
-		// 			Description: "Test description",
-		// 		},
-		// 	},
-		// 	wantId: 2,
-		// 	mockBehavior: func(input input, id int) {
-		// 		mock.ExpectBegin()
+		{
+			name: "OK",
+			input: input{
+				listId: 1,
+				item: todo.Item{
+					Title:       "Test title",
+					Description: "Test description",
+				},
+			},
+			wantId: 2,
+			mockBehavior: func(input input, id int) {
+				mock.ExpectBegin()
 
-		// 		rows := sqlmock.NewRows([]string{"wantId"}).AddRow(id)
-		// 		mock.ExpectQuery("INSERT INTO todo_items").
-		// 			WithArgs(input.item.Title, input.item.Description).
-		// 			WillReturnRows(rows)
+				rows := sqlmock.NewRows([]string{"wantId"}).AddRow(id)
+				mock.ExpectQuery("INSERT INTO todo_items").
+					WithArgs(input.item.Title, input.item.Description).
+					WillReturnRows(rows)
 
-		// 		mock.ExpectExec("INSERT INTO lists_items").
-		// 			WithArgs(input.listId, id).
-		// 			WillReturnResult(sqlmock.NewResult(1, 1))
+				mock.ExpectExec("INSERT INTO lists_items").
+					WithArgs(input.listId, id).
+					WillReturnResult(sqlmock.NewResult(1, 1))
 
-		// 		mock.ExpectCommit()
-		// 	},
-		// },
+				mock.ExpectCommit()
+			},
+		},
 		{
 			name: "Empty Fields",
 			input: input{
@@ -79,30 +79,30 @@ func TestTodoItemPostgres_Create(t *testing.T) {
 			},
 			wantErr: true,
 		},
-		// {
-		// 	name: "Failed 2nd Insert",
-		// 	input: input{
-		// 		listId: 1,
-		// 		item: todo.Item{
-		// 			Title:       "title",
-		// 			Description: "description",
-		// 		},
-		// 	},
-		// 	wantId: 2,
-		// 	mockBehavior: func(input input, id int) {
-		// 		mock.ExpectBegin()
+		{
+			name: "Failed 2nd Insert",
+			input: input{
+				listId: 1,
+				item: todo.Item{
+					Title:       "title",
+					Description: "description",
+				},
+			},
+			wantId: 2,
+			mockBehavior: func(input input, id int) {
+				mock.ExpectBegin()
 
-		// 		rows := sqlmock.NewRows([]string{"id"}).AddRow(id)
-		// 		mock.ExpectQuery("INSERT INTO todo_items").
-		// 			WithArgs(input.item.Title, input.item.Description).WillReturnRows(rows)
+				rows := sqlmock.NewRows([]string{"id"}).AddRow(id)
+				mock.ExpectQuery("INSERT INTO todo_items").
+					WithArgs(input.item.Title, input.item.Description).WillReturnRows(rows)
 
-		// 		mock.ExpectExec("INSERT INTO lists_items").WithArgs(input.listId, id).
-		// 			WillReturnError(errors.New("insert error"))
+				mock.ExpectExec("INSERT INTO lists_items").WithArgs(input.listId, id).
+					WillReturnError(errors.New("insert error"))
 
-		// 		mock.ExpectRollback()
-		// 	},
-		// 	wantErr: true,
-		// },
+				mock.ExpectRollback()
+			},
+			wantErr: true,
+		},
 	}
 
 	for _, testCase := range testTable {
