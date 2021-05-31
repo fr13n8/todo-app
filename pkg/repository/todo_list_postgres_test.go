@@ -441,7 +441,7 @@ func TestTodoListPostgres_Update(t *testing.T) {
 				userId: 1,
 			},
 			mockBehavior: func(input input) {
-				mock.ExpectExec("UPDATE todo_lists tl SET (.+) FROM users_lists ul WHERE (.+)").
+				mock.ExpectExec("UPDATE todo_lists tl SET FROM users_lists ul WHERE (.+)").
 					WithArgs(input.listId, input.userId).
 					WillReturnResult(sqlmock.NewResult(1, 1))
 			},
