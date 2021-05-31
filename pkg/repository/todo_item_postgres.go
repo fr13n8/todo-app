@@ -25,8 +25,7 @@ func (r *TodoItemPostgres) Create(listId int, input todo.Item) (int, error) {
 	var itemId int
 	createItemQuery := fmt.Sprintf("INSERT INTO %s (title, description) VALUES ($1, $2) RETURNING id", todoItemsTable)
 	row := tx.QueryRow(createItemQuery, input.Title, input.Description)
-	err = row.Scan(&itemId)
-	if err != nil {
+	if err := row.Scan(&itemId); err != nil {
 		rolError := tx.Rollback()
 		if rolError != nil {
 			return 0, rolError

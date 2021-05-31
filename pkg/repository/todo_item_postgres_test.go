@@ -44,7 +44,7 @@ func TestTodoItemPostgres_Create(t *testing.T) {
 					Description: "Test description",
 				},
 			},
-			wantId: 2,
+			wantId: 1,
 			mockBehavior: func(input input, id int) {
 				mock.ExpectBegin()
 
@@ -74,7 +74,8 @@ func TestTodoItemPostgres_Create(t *testing.T) {
 
 				rows := sqlmock.NewRows([]string{"id"}).AddRow(id).RowError(1, errors.New("insert error"))
 				mock.ExpectQuery("INSERT INTO todo_items").
-					WithArgs(input.item.Title, input.item.Description).WillReturnRows(rows)
+					WithArgs(input.item.Title, input.item.Description).
+					WillReturnRows(rows)
 
 				mock.ExpectRollback()
 			},
@@ -90,15 +91,16 @@ func TestTodoItemPostgres_Create(t *testing.T) {
 					Description: "description",
 				},
 			},
-			wantId: 2,
 			mockBehavior: func(input input, id int) {
 				mock.ExpectBegin()
 
 				rows := sqlmock.NewRows([]string{"id"}).AddRow(id)
 				mock.ExpectQuery("INSERT INTO todo_items").
-					WithArgs(input.item.Title, input.item.Description).WillReturnRows(rows)
+					WithArgs(input.item.Title, input.item.Description).
+					WillReturnRows(rows)
 
-				mock.ExpectExec("INSERT INTO lists_items").WithArgs(input.listId, id).
+				mock.ExpectExec("INSERT INTO lists_items").
+					WithArgs(input.listId, id).
 					WillReturnError(errors.New("insert error"))
 
 				mock.ExpectRollback()
@@ -154,17 +156,21 @@ func TestTodoItemPostgres_GetById(t *testing.T) {
 				itemId: 1,
 			},
 			want: todo.Item{
+				Id:          1,
 				Title:       "title",
 				Description: "description",
 				Done:        false,
 			},
 			mockBehavior: func(input input) {
-				rows := sqlmock.NewRows([]string{"id", "title", "description", "done"}).AddRow(0, "title", "description", false)
+				rows := sqlmock.NewRows([]string{"id", "title", "description", "done"}).
+					AddRow(1, "title", "description", false)
 
 				mock.ExpectQuery(`SELECT (.+) FROM todo_items ti
 									INNER JOIN lists_items li on (.+)
 									INNER JOIN users_lists ul on (.+)
-									WHERE (.+)`).WithArgs(input.itemId, input.userId).WillReturnRows(rows)
+									WHERE (.+)`).
+					WithArgs(input.itemId, input.userId).
+					WillReturnRows(rows)
 			},
 		},
 		{
@@ -184,7 +190,9 @@ func TestTodoItemPostgres_GetById(t *testing.T) {
 				mock.ExpectQuery(`SELECT (.+) FROM todo_items ti 
 									INNER JOIN lists_items li on (.+)
 									INNER JOIN users_lists ul on (.+)
-									WHERE (.+)`).WithArgs(input.itemId, input.userId).WillReturnRows(rows)
+									WHERE (.+)`).
+					WithArgs(input.itemId, input.userId).
+					WillReturnRows(rows)
 			},
 			wantErr: true,
 		},
@@ -246,7 +254,9 @@ func TestTodoItemPostgres_GetAll(t *testing.T) {
 				mock.ExpectQuery(`SELECT (.+) FROM todo_items ti 
 									INNER JOIN lists_items li on (.+)
 									INNER JOIN users_lists ul on (.+)
-									WHERE (.+)`).WithArgs(input.listId, input.userId).WillReturnRows(rows)
+									WHERE (.+)`).
+					WithArgs(input.listId, input.userId).
+					WillReturnRows(rows)
 			},
 			want: []todo.Item{
 				{
@@ -281,7 +291,9 @@ func TestTodoItemPostgres_GetAll(t *testing.T) {
 				mock.ExpectQuery(`SELECT (.+) FROM todo_items ti 
 									INNER JOIN lists_items li on (.+)
 									INNER JOIN users_lists ul on (.+)
-									WHERE (.+)`).WithArgs(input.listId, input.userId).WillReturnRows(rows)
+									WHERE (.+)`).
+					WithArgs(input.listId, input.userId).
+					WillReturnRows(rows)
 			},
 		},
 	}
@@ -330,7 +342,9 @@ func TestTodoItemPostgres_Delete(t *testing.T) {
 			mockBehavior: func(input input) {
 				mock.ExpectExec(`DELETE FROM todo_items ti 
 									USING lists_items li, users_lists ul 
-									WHERE (.+)`).WithArgs(input.userId, input.itemId).WillReturnResult(sqlmock.NewResult(0, 1))
+									WHERE (.+)`).
+					WithArgs(input.userId, input.itemId).
+					WillReturnResult(sqlmock.NewResult(1, 1))
 			},
 			input: input{
 				userId: 1,
@@ -338,11 +352,13 @@ func TestTodoItemPostgres_Delete(t *testing.T) {
 			},
 		},
 		{
-			name: "no record found",
+			name: "No record found",
 			mockBehavior: func(input input) {
 				mock.ExpectExec(`DELETE FROM todo_items ti 
 									USING lists_items li, users_lists ul 
-									WHERE (.+)`).WithArgs(input.userId, input.itemId).WillReturnError(sql.ErrNoRows)
+									WHERE (.+)`).
+					WithArgs(input.userId, input.itemId).
+					WillReturnError(sql.ErrNoRows)
 			},
 			input: input{
 				userId: 1,
@@ -404,14 +420,16 @@ func TestTodoItemPostgres_Update(t *testing.T) {
 			},
 			mockBehavior: func(input input) {
 				mock.ExpectExec("UPDATE todo_items ti SET (.+) FROM lists_items li, users_lists ul WHERE (.+)").
-					WithArgs(input.item.Title, input.item.Description, input.item.Done, input.itemId, input.userId).WillReturnResult(sqlmock.NewResult(0, 1))
+					WithArgs(input.item.Title, input.item.Description, input.item.Done, input.itemId, input.userId).
+					WillReturnResult(sqlmock.NewResult(0, 1))
 			},
 		},
 		{
 			name: "OK_WithoutDone",
 			mockBehavior: func(input input) {
 				mock.ExpectExec("UPDATE todo_items ti SET (.+) FROM lists_items li, users_lists ul WHERE (.+)").
-					WithArgs(input.item.Title, input.item.Description, input.itemId, input.userId).WillReturnResult(sqlmock.NewResult(0, 1))
+					WithArgs(input.item.Title, input.item.Description, input.itemId, input.userId).
+					WillReturnResult(sqlmock.NewResult(0, 1))
 			},
 			input: input{
 				itemId: 1,
@@ -426,7 +444,8 @@ func TestTodoItemPostgres_Update(t *testing.T) {
 			name: "OK_WithoutDoneAndDescription",
 			mockBehavior: func(input input) {
 				mock.ExpectExec("UPDATE todo_items ti SET (.+) FROM lists_items li, users_lists ul WHERE (.+)").
-					WithArgs(input.item.Title, input.itemId, input.userId).WillReturnResult(sqlmock.NewResult(0, 1))
+					WithArgs(input.item.Title, input.itemId, input.userId).
+					WillReturnResult(sqlmock.NewResult(0, 1))
 			},
 			input: input{
 				itemId: 1,
@@ -440,7 +459,8 @@ func TestTodoItemPostgres_Update(t *testing.T) {
 			name: "OK_NoInputFields",
 			mockBehavior: func(input input) {
 				mock.ExpectExec("UPDATE todo_items ti SET FROM lists_items li, users_lists ul WHERE (.+)").
-					WithArgs(input.itemId, input.userId).WillReturnResult(sqlmock.NewResult(0, 1))
+					WithArgs(input.itemId, input.userId).
+					WillReturnResult(sqlmock.NewResult(0, 1))
 			},
 			input: input{
 				itemId: 1,
