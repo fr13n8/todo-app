@@ -37,7 +37,7 @@ func TestHandler_signUp(t *testing.T) {
 				r.EXPECT().CreateUser(user).Return(1, nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: `{"ID":1}`,
+			expectedResponseBody: `{"id":1}`,
 		},
 		{
 			name:                 "Empty fields",
@@ -124,7 +124,7 @@ func TestHandler_signIn(t *testing.T) {
 			expectedResponseBody: `{"message":"invalid input body"}`,
 		},
 		{
-			name:      "Service failure",
+			name:      "service failure",
 			inputBody: `{"username": "test", "password": "test"}`,
 			inputUser: todo.SignInInput{
 				UserName: "test",

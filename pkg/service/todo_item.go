@@ -31,7 +31,7 @@ func (s *TodoItemService) Create(listId int, userId int, input todo.Item) (int, 
 func (s *TodoItemService) GetAll(listId int, userId int) ([]todo.Item, error) {
 	_, err := s.listRepo.GetById(listId, userId)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("record not found")
 	}
 	return s.repo.GetAll(listId, userId)
 }

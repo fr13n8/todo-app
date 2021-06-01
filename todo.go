@@ -28,8 +28,8 @@ type ListsItem struct {
 }
 
 type UpdateListInput struct {
-	Title       *string `json:"title" binding:"required"`
-	Description *string `json:"description" binding:"required"`
+	Title       *string `json:"title"`
+	Description *string `json:"description"`
 }
 
 func (i UpdateListInput) Validate() error {
@@ -40,8 +40,8 @@ func (i UpdateListInput) Validate() error {
 }
 
 type UpdateItemInput struct {
-	Title       *string `json:"title" binding:"required"`
-	Description *string `json:"description" binding:"required"`
+	Title       *string `json:"title"`
+	Description *string `json:"description"`
 	Done        *bool   `json:"done"`
 }
 

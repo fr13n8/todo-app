@@ -96,8 +96,8 @@ func TestHandler_userIdentity(t *testing.T) {
 
 			r.ServeHTTP(w, req)
 
-			assert.Equal(t, w.Code, testCase.expectedStatusCode)
-			assert.Equal(t, w.Body.String(), testCase.expectedResponseBody)
+			assert.Equal(t, testCase.expectedStatusCode, w.Code)
+			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
 		})
 	}
 }

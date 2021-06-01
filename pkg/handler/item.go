@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -22,7 +23,7 @@ func (h *Handler) createItem(c *gin.Context) {
 
 	var input todo.Item
 	if err := c.BindJSON(&input); err != nil {
-		newResponseError(c, http.StatusBadRequest, err)
+		newResponseError(c, http.StatusBadRequest, errors.New("invalid input body"))
 		return
 	}
 
@@ -103,7 +104,7 @@ func (h *Handler) updateItem(c *gin.Context) {
 	}
 
 	if err := c.BindJSON(&input); err != nil {
-		newResponseError(c, http.StatusBadRequest, err)
+		newResponseError(c, http.StatusBadRequest, errors.New("invalid input body"))
 		return
 	}
 
