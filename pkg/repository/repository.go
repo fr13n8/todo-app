@@ -6,7 +6,7 @@ import (
 )
 
 type Authorization interface {
-	CreateUser(user todo.User) (int, error)
+	CreateUser(user todo.SignUpInput) (int, error)
 	GetUser(username string) (todo.User, error)
 }
 

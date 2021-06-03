@@ -14,14 +14,14 @@ import (
 // @ID create-account
 // @Accept  json
 // @Produce  json
-// @Param input body todo.User true "account info"
+// @Param input body todo.SignUpInput true "account info"
 // @Success 200 {integer} integer 1
 // @Failure 400,404 {object} HTTPError
 // @Failure 500 {object} HTTPError
 // @Failure default {object} HTTPError
 // @Router /auth/sign-up [post]
 func (h *Handler) signUp(c *gin.Context) {
-	var input todo.User
+	var input todo.SignUpInput
 
 	if err := c.BindJSON(&input); err != nil {
 		newResponseError(c, http.StatusBadRequest, errors.New("invalid input body"))

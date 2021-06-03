@@ -15,12 +15,12 @@ import (
 )
 
 func TestHandler_signUp(t *testing.T) {
-	type mockBehavior func(s *mockservice.MockAuthorization, user todo.User)
+	type mockBehavior func(s *mockservice.MockAuthorization, user todo.SignUpInput)
 
 	testTable := []struct {
 		name                 string
 		inputBody            string
-		inputUser            todo.User
+		inputUser            todo.SignUpInput
 		mockBehavior         mockBehavior
 		expectedStatusCode   int
 		expectedResponseBody string
@@ -28,12 +28,12 @@ func TestHandler_signUp(t *testing.T) {
 		{
 			name:      "OK",
 			inputBody: `{"name": "Test", "username": "test", "password": "test"}`,
-			inputUser: todo.User{
+			inputUser: todo.SignUpInput{
 				Name:     "Test",
 				UserName: "test",
 				Password: "test",
 			},
-			mockBehavior: func(r *mockservice.MockAuthorization, user todo.User) {
+			mockBehavior: func(r *mockservice.MockAuthorization, user todo.SignUpInput) {
 				r.EXPECT().CreateUser(user).Return(1, nil)
 			},
 			expectedStatusCode:   200,
@@ -42,19 +42,19 @@ func TestHandler_signUp(t *testing.T) {
 		{
 			name:                 "Empty fields",
 			inputBody:            `{"username": "test", "password": "test"}`,
-			mockBehavior:         func(r *mockservice.MockAuthorization, user todo.User) {},
+			mockBehavior:         func(r *mockservice.MockAuthorization, user todo.SignUpInput) {},
 			expectedStatusCode:   400,
 			expectedResponseBody: `{"message":"invalid input body"}`,
 		},
 		{
 			name:      "Service failure",
 			inputBody: `{"name": "Test", "username": "test", "password": "test"}`,
-			inputUser: todo.User{
+			inputUser: todo.SignUpInput{
 				Name:     "Test",
 				UserName: "test",
 				Password: "test",
 			},
-			mockBehavior: func(r *mockservice.MockAuthorization, user todo.User) {
+			mockBehavior: func(r *mockservice.MockAuthorization, user todo.SignUpInput) {
 				r.EXPECT().CreateUser(user).Return(1, errors.New("service failure"))
 			},
 			expectedStatusCode:   500,

@@ -20,7 +20,7 @@ func TestTodoAuth_CreateUser(t *testing.T) {
 	r := NewAuthPostgres(db)
 
 	type input struct {
-		user todo.User
+		user todo.SignUpInput
 	}
 
 	type mockBehavior func(input input, id int)
@@ -35,8 +35,7 @@ func TestTodoAuth_CreateUser(t *testing.T) {
 		{
 			name: "Ok",
 			input: input{
-				user: todo.User{
-					Id:       1,
+				user: todo.SignUpInput{
 					Name:     "name",
 					UserName: "username",
 					Password: "password",
@@ -53,8 +52,7 @@ func TestTodoAuth_CreateUser(t *testing.T) {
 		{
 			name: "Empty password field",
 			input: input{
-				user: todo.User{
-					Id:       1,
+				user: todo.SignUpInput{
 					Name:     "name",
 					UserName: "username",
 					Password: "",
@@ -71,8 +69,7 @@ func TestTodoAuth_CreateUser(t *testing.T) {
 		{
 			name: "Empty name field",
 			input: input{
-				user: todo.User{
-					Id:       1,
+				user: todo.SignUpInput{
 					Name:     "",
 					UserName: "username",
 					Password: "password",
@@ -89,8 +86,7 @@ func TestTodoAuth_CreateUser(t *testing.T) {
 		{
 			name: "Empty username field",
 			input: input{
-				user: todo.User{
-					Id:       1,
+				user: todo.SignUpInput{
 					Name:     "name",
 					UserName: "",
 					Password: "password",
@@ -108,8 +104,7 @@ func TestTodoAuth_CreateUser(t *testing.T) {
 			name:    "Empty fields",
 			wantErr: true,
 			input: input{
-				user: todo.User{
-					Id:       1,
+				user: todo.SignUpInput{
 					Name:     "",
 					UserName: "",
 					Password: "",
