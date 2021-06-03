@@ -951,12 +951,12 @@ type swaggerInfo struct {
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
-	Version:     "1.0",
+	Version:     "",
 	Host:        "",
 	BasePath:    "",
 	Schemes:     []string{},
-	Title:       "Todo App Rest API",
-	Description: "REST API Server for TodoList Application",
+	Title:       "",
+	Description: "",
 }
 
 type s struct{}

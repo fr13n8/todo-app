@@ -1,14 +1,11 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "REST API Server for TodoList Application",
-        "title": "Todo App Rest API",
         "contact": {},
         "license": {
             "name": "Apache 2.0",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
-        "version": "1.0"
+        }
     },
     "paths": {
         "/api/items/:id": {

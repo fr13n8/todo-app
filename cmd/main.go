@@ -18,10 +18,6 @@ import (
 	"github.com/fr13n8/todo-app/pkg/handler"
 )
 
-// @title Todo App Rest API
-// @version 1.0
-// @description REST API Server for TodoList Application
-
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
@@ -39,17 +35,21 @@ func main() {
 		logrus.Fatalf("error loading environment: %s", err.Error())
 	}
 
-	docs.SwaggerInfo.Version = "1.0"
+	appName := viper.GetString("app.name")
+
+	docs.SwaggerInfo.Title = viper.GetString("swagger.title")
+	docs.SwaggerInfo.Description = viper.GetString("swagger.description")
+	docs.SwaggerInfo.Version = viper.GetString("swagger.version")
 	docs.SwaggerInfo.Host = os.Getenv("SERVER_HOST")
 	docs.SwaggerInfo.BasePath = "/"
 
 	db, err := repository.NewPostgresDB(repository.Config{
-		Host:     viper.GetString("db.host"),
-		Port:     viper.GetString("db.port"),
-		Username: viper.GetString("db.username"),
+		Host:     os.Getenv("DB_HOST"),
+		Port:     os.Getenv("DB_PORT"),
+		Username: os.Getenv("DB_USERNAME"),
 		Password: os.Getenv("DB_PASSWORD"),
-		DBName:   viper.GetString("db.dbname"),
-		SSLMode:  viper.GetString("db.sslmode"),
+		DBName:   os.Getenv("DB_NAME"),
+		SSLMode:  os.Getenv("DB_SSLMODE"),
 	})
 
 	if err != nil {
@@ -63,17 +63,17 @@ func main() {
 	srv := new(todo.Server)
 
 	go func() {
-		if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
+		if err := srv.Run(os.Getenv("PORT"), handlers.InitRoutes()); err != nil {
 			logrus.Fatalf("error ocurred while running http server: %s", err.Error())
 		}
 	}()
-	logrus.Println("ToDo app started")
+	logrus.Printf("%s started", appName)
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
 
-	logrus.Println("ToDo app shutting down")
+	logrus.Printf("%s shutting down", appName)
 
 	if err := srv.Shutdown(context.Background()); err != nil {
 		logrus.Errorf("error occured on server shutting down: %s", err.Error())

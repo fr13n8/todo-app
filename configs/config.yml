@@ -1,8 +1,7 @@
-port: "8000"
+app:
+  name: "Todo REST API"
 
-db:
-  username: "postgres"
-  host: "localhost" # localhost(out docker) || db(in docker)
-  port: "5436" # 5436(out docker) || 5432(in docker)
-  dbname: "postgres"
-  sslmode: "disable"
+swagger:
+  title: "Todo REST API server"
+  description: "This is a sample Todo REST API server."
+  version: "1.0"

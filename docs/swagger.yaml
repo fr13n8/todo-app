@@ -95,12 +95,9 @@ definitions:
     type: object
 info:
   contact: {}
-  description: REST API Server for TodoList Application
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  title: Todo App Rest API
-  version: "1.0"
 paths:
   /api/items/:id:
     put:
