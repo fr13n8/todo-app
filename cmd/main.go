@@ -31,8 +31,11 @@ func main() {
 		logrus.Fatalf("error initializing config: %s", err.Error())
 	}
 
-	if err := godotenv.Load(); err != nil {
-		logrus.Fatalf("error loading environment: %s", err.Error())
+	err := godotenv.Load()
+	if !viper.GetBool("heroku") {
+		if err != nil {
+			logrus.Fatalf("error loading environment: %s", err.Error())
+		}
 	}
 
 	appName := viper.GetString("app.name")

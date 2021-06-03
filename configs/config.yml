@@ -5,3 +5,5 @@ swagger:
   title: "Todo REST API server"
   description: "This is a sample Todo REST API server."
   version: "1.0"
+
+heroku: true
