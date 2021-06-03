@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/fr13n8/todo-app/docs"
 	"github.com/fr13n8/todo-app/pkg/repository"
 	"github.com/fr13n8/todo-app/pkg/service"
 	"github.com/joho/godotenv"
@@ -17,6 +18,17 @@ import (
 	"github.com/fr13n8/todo-app/pkg/handler"
 )
 
+// @title Todo App Rest API
+// @version 1.0
+// @description REST API Server for TodoList Application
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+
 func main() {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
 	if err := initConfig(); err != nil {
@@ -26,6 +38,10 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		logrus.Fatalf("error loading environment: %s", err.Error())
 	}
+
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Host = os.Getenv("SERVER_HOST")
+	docs.SwaggerInfo.BasePath = "/"
 
 	db, err := repository.NewPostgresDB(repository.Config{
 		Host:     viper.GetString("db.host"),

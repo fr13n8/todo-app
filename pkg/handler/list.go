@@ -9,6 +9,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Summary Create todo list
+// @Security ApiKeyAuth
+// @Tags lists
+// @Description create todo list
+// @ID create-list
+// @Accept  json
+// @Produce  json
+// @Param input body todo.List true "list info"
+// @Success 200 {integer} integer 1
+// @Failure 400,404 {object} HTTPError
+// @Failure 500 {object} HTTPError
+// @Failure default {object} HTTPError
+// @Router /api/lists [post]
 func (h *Handler) createList(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
@@ -34,6 +47,18 @@ type getAllListResponse struct {
 	Data []todo.List `json:"data"`
 }
 
+// @Summary Get All Lists
+// @Security ApiKeyAuth
+// @Tags lists
+// @Description get all lists
+// @ID get-all-lists
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} getAllListResponse
+// @Failure 400,404 {object} HTTPError
+// @Failure 500 {object} HTTPError
+// @Failure default {object} HTTPError
+// @Router /api/lists [get]
 func (h *Handler) getAllList(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
@@ -55,6 +80,19 @@ type getListResponse struct {
 	Data todo.List `json:"data"`
 }
 
+// @Summary Get List By Id
+// @Security ApiKeyAuth
+// @Tags lists
+// @Description get list by id
+// @ID get-list-by-id
+// @Accept  json
+// @Produce  json
+// @Param id path int true "List id"
+// @Success 200 {object} getListResponse
+// @Failure 400,404 {object} HTTPError
+// @Failure 500 {object} HTTPError
+// @Failure default {object} HTTPError
+// @Router /api/lists/:id [get]
 func (h *Handler) getListById(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
@@ -78,6 +116,19 @@ func (h *Handler) getListById(c *gin.Context) {
 	})
 }
 
+// @Summary Update todo list
+// @Security ApiKeyAuth
+// @Tags lists
+// @Description update todo list
+// @ID update-list
+// @Accept  json
+// @Produce  json
+// @Param input body todo.UpdateListInput true "list info"
+// @Success 200 {string} string Ok
+// @Failure 400,404 {object} HTTPError
+// @Failure 500 {object} HTTPError
+// @Failure default {object} HTTPError
+// @Router /api/lists [put]
 func (h *Handler) updateList(c *gin.Context) {
 	var input todo.UpdateListInput
 	userId, err := getUserId(c)
@@ -106,6 +157,19 @@ func (h *Handler) updateList(c *gin.Context) {
 	})
 }
 
+// @Summary Delete List By Id
+// @Security ApiKeyAuth
+// @Tags lists
+// @Description delete list by id
+// @ID delete-list-by-id
+// @Accept  json
+// @Produce  json
+// @Param id path int true "List id"
+// @Success 200 {string} Ok
+// @Failure 400,404 {object} HTTPError
+// @Failure 500 {object} HTTPError
+// @Failure default {object} HTTPError
+// @Router /api/lists/:id [delete]
 func (h *Handler) deleteList(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {

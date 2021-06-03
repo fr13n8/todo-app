@@ -2,7 +2,7 @@ port: "8000"
 
 db:
   username: "postgres"
-  host: "db" # localhost(out docker) || db(in docker)
-  port: "5432" # 5436(out docker) || 5432(in docker)
+  host: "localhost" # localhost(out docker) || db(in docker)
+  port: "5436" # 5436(out docker) || 5432(in docker)
   dbname: "postgres"
   sslmode: "disable"
