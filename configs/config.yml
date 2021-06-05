@@ -6,4 +6,10 @@ swagger:
   description: "This is a sample Todo REST API server."
   version: "1.0"
 
+jwt:
+  signingKey: "qrkjk#4#%35FSFJlja#4353KSFjH"  
+
+password:  
+  cost: 10
+
 heroku: true

@@ -7,12 +7,13 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/fr13n8/todo-app"
 	"github.com/fr13n8/todo-app/pkg/repository"
+	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
 )
 
-const (
-	cost       = 10
-	signingKey = "qrkjk#4#%35FSFJlja#4353KSFjH"
+var (
+	cost       = viper.GetInt("password.cost")
+	signingKey = viper.GetString("jwt.signingKey")
 )
 
 type AuthService struct {
