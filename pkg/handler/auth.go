@@ -64,6 +64,9 @@ func (h *Handler) signIn(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": token})
+	c.JSON(http.StatusOK, gin.H{
+		"accessToken":  token[0],
+		"refreshToken": token[1],
+	})
 
 }

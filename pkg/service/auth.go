@@ -34,14 +34,14 @@ func (s *AuthService) CreateUser(user todo.SignUpInput) (int, error) {
 	return s.repo.CreateUser(user)
 }
 
-func (s *AuthService) GenerateToken(username, password string) (string, error) {
+func (s *AuthService) GenerateToken(username, password string) ([]string, error) {
 	user, err := s.repo.GetUser(username)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		return "", err
+		return nil, err
 	}
 	now := time.Now()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
@@ -51,9 +51,22 @@ func (s *AuthService) GenerateToken(username, password string) (string, error) {
 			IssuedAt:  now.Unix(),
 		}, user.Id,
 	})
+	accessToken, err := token.SignedString([]byte(signingKey))
+	if err != nil {
+		return nil, err
+	}
 
-	return token.SignedString([]byte(signingKey))
+	rToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.StandardClaims{
+		Issuer:    user.Name,
+		ExpiresAt: now.Add(12 * time.Hour).Unix(),
+		IssuedAt:  now.Unix(),
+	})
+	refreshToken, err := rToken.SignedString([]byte(signingKey))
+	if err != nil {
+		return nil, err
+	}
 
+	return []string{accessToken, refreshToken}, nil
 }
 
 func (s *AuthService) ParseToken(accessToken string) (int, error) {

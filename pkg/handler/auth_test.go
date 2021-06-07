@@ -111,10 +111,10 @@ func TestHandler_signIn(t *testing.T) {
 				Password: "test",
 			},
 			mockBehavior: func(r *mockservice.MockAuthorization, user todo.SignInInput) {
-				r.EXPECT().GenerateToken(user.UserName, user.Password).Return("token", nil)
+				r.EXPECT().GenerateToken(user.UserName, user.Password).Return([]string{"token", "token1"}, nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: `{"token":"token"}`,
+			expectedResponseBody: `{"accessToken":"token","refreshToken":"token1"}`,
 		},
 		{
 			name:                 "Empty fields",
@@ -131,7 +131,7 @@ func TestHandler_signIn(t *testing.T) {
 				Password: "test",
 			},
 			mockBehavior: func(r *mockservice.MockAuthorization, user todo.SignInInput) {
-				r.EXPECT().GenerateToken(user.UserName, user.Password).Return("token", errors.New("service failure"))
+				r.EXPECT().GenerateToken(user.UserName, user.Password).Return(nil, errors.New("service failure"))
 			},
 			expectedStatusCode:   500,
 			expectedResponseBody: `{"message":"service failure"}`,

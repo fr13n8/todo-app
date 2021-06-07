@@ -50,10 +50,10 @@ func (mr *MockAuthorizationMockRecorder) CreateUser(user interface{}) *gomock.Ca
 }
 
 // GenerateToken mocks base method.
-func (m *MockAuthorization) GenerateToken(username, password string) (string, error) {
+func (m *MockAuthorization) GenerateToken(username, password string) ([]string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GenerateToken", username, password)
-	ret0, _ := ret[0].(string)
+	ret0, _ := ret[0].([]string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
