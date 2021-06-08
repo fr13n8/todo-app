@@ -8,6 +8,7 @@ import (
 type Authorization interface {
 	CreateUser(user todo.SignUpInput) (int, error)
 	GetUser(username string) (todo.User, error)
+	CreateSession(input todo.Session) error
 }
 
 type TodoList interface {

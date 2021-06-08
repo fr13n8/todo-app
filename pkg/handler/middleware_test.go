@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/fr13n8/todo-app/pkg/service"
 	mockservice "github.com/fr13n8/todo-app/pkg/service/mocks"
 	"github.com/gin-gonic/gin"
@@ -31,7 +32,12 @@ func TestHandler_userIdentity(t *testing.T) {
 			headerValue: "Bearer token",
 			token:       "token",
 			mockBehavior: func(s *mockservice.MockAuthorization, token string) {
-				s.EXPECT().ParseToken(token).Return(1, nil)
+				s.EXPECT().ParseToken(token).Return(&jwt.StandardClaims{
+					Issuer:    "",
+					ExpiresAt: 0,
+					IssuedAt:  0,
+					Id:        "1",
+				}, nil)
 			},
 			expectedStatusCode:   200,
 			expectedResponseBody: `1`,
@@ -66,7 +72,7 @@ func TestHandler_userIdentity(t *testing.T) {
 			headerValue: "Bearer token",
 			token:       "token",
 			mockBehavior: func(s *mockservice.MockAuthorization, token string) {
-				s.EXPECT().ParseToken(token).Return(1, errors.New("failed to parse token"))
+				s.EXPECT().ParseToken(token).Return(nil, errors.New("failed to parse token"))
 			},
 			expectedStatusCode:   401,
 			expectedResponseBody: `{"message":"failed to parse token"}`,

@@ -7,6 +7,7 @@ package mock_service
 import (
 	reflect "reflect"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	todo "github.com/fr13n8/todo-app"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -34,6 +35,20 @@ func (m *MockAuthorization) EXPECT() *MockAuthorizationMockRecorder {
 	return m.recorder
 }
 
+// CreateSession mocks base method.
+func (m *MockAuthorization) CreateSession(input todo.Session) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateSession", input)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateSession indicates an expected call of CreateSession.
+func (mr *MockAuthorizationMockRecorder) CreateSession(input interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSession", reflect.TypeOf((*MockAuthorization)(nil).CreateSession), input)
+}
+
 // CreateUser mocks base method.
 func (m *MockAuthorization) CreateUser(user todo.SignUpInput) (int, error) {
 	m.ctrl.T.Helper()
@@ -50,25 +65,25 @@ func (mr *MockAuthorizationMockRecorder) CreateUser(user interface{}) *gomock.Ca
 }
 
 // GenerateToken mocks base method.
-func (m *MockAuthorization) GenerateToken(username, password string) ([]string, error) {
+func (m *MockAuthorization) GenerateToken(username, password, userAgent string) ([]string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GenerateToken", username, password)
+	ret := m.ctrl.Call(m, "GenerateToken", username, password, userAgent)
 	ret0, _ := ret[0].([]string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GenerateToken indicates an expected call of GenerateToken.
-func (mr *MockAuthorizationMockRecorder) GenerateToken(username, password interface{}) *gomock.Call {
+func (mr *MockAuthorizationMockRecorder) GenerateToken(username, password, userAgent interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateToken", reflect.TypeOf((*MockAuthorization)(nil).GenerateToken), username, password)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateToken", reflect.TypeOf((*MockAuthorization)(nil).GenerateToken), username, password, userAgent)
 }
 
 // ParseToken mocks base method.
-func (m *MockAuthorization) ParseToken(token string) (int, error) {
+func (m *MockAuthorization) ParseToken(token string) (*jwt.StandardClaims, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseToken", token)
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(*jwt.StandardClaims)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -77,6 +92,21 @@ func (m *MockAuthorization) ParseToken(token string) (int, error) {
 func (mr *MockAuthorizationMockRecorder) ParseToken(token interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseToken", reflect.TypeOf((*MockAuthorization)(nil).ParseToken), token)
+}
+
+// RefreshToken mocks base method.
+func (m *MockAuthorization) RefreshToken(token string) (*jwt.StandardClaims, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RefreshToken", token)
+	ret0, _ := ret[0].(*jwt.StandardClaims)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RefreshToken indicates an expected call of RefreshToken.
+func (mr *MockAuthorizationMockRecorder) RefreshToken(token interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshToken", reflect.TypeOf((*MockAuthorization)(nil).RefreshToken), token)
 }
 
 // MockTodoList is a mock of TodoList interface.

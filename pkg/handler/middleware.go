@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -28,12 +29,17 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	}
 	token := splitToken[1]
 
-	userId, err := h.services.ParseToken(token)
+	claims, err := h.services.ParseToken(token)
 	if err != nil {
 		newResponseError(c, http.StatusUnauthorized, err)
 		return
 	}
 
+	userId, err := strconv.Atoi(claims.Id)
+	if err != nil {
+		newResponseError(c, http.StatusUnauthorized, errors.New("service failure"))
+		return
+	}
 	c.Set(userCtx, userId)
 	c.Next()
 }

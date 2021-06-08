@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/dgrijalva/jwt-go"
 	"github.com/fr13n8/todo-app"
 	"github.com/fr13n8/todo-app/pkg/repository"
 )
@@ -9,8 +10,10 @@ import (
 
 type Authorization interface {
 	CreateUser(user todo.SignUpInput) (int, error)
-	GenerateToken(username, password string) ([]string, error)
-	ParseToken(token string) (int, error)
+	GenerateToken(username, password, userAgent string) ([]string, error)
+	ParseToken(token string) (*jwt.StandardClaims, error)
+	RefreshToken(token string) (*jwt.StandardClaims, error)
+	CreateSession(input todo.Session) error
 }
 
 type TodoList interface {

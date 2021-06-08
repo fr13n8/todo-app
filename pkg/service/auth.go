@@ -2,27 +2,25 @@ package service
 
 import (
 	"errors"
+	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/fr13n8/todo-app"
 	"github.com/fr13n8/todo-app/pkg/repository"
+	"github.com/google/uuid"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var (
-	cost       = viper.GetInt("password.cost")
-	signingKey = viper.GetString("jwt.signingKey")
+	cost         = viper.GetInt("password.cost")
+	signingKey   = viper.GetString("jwt.signingKey")
+	reSigningKey = viper.GetString("jwt.resigningKey")
 )
 
 type AuthService struct {
 	repo repository.Authorization
-}
-
-type tokenClaims struct {
-	jwt.StandardClaims
-	UserId int `json:"user_id"`
 }
 
 func NewAuthService(repo repository.Authorization) *AuthService {
@@ -34,7 +32,11 @@ func (s *AuthService) CreateUser(user todo.SignUpInput) (int, error) {
 	return s.repo.CreateUser(user)
 }
 
-func (s *AuthService) GenerateToken(username, password string) ([]string, error) {
+func (s *AuthService) CreateSession(input todo.Session) error {
+	return s.repo.CreateSession(input)
+}
+
+func (s *AuthService) GenerateToken(username, password, userAgent string) ([]string, error) {
 	user, err := s.repo.GetUser(username)
 	if err != nil {
 		return nil, err
@@ -44,12 +46,11 @@ func (s *AuthService) GenerateToken(username, password string) ([]string, error)
 		return nil, err
 	}
 	now := time.Now()
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
-		jwt.StandardClaims{
-			Issuer:    user.Name,
-			ExpiresAt: now.Add(12 * time.Hour).Unix(),
-			IssuedAt:  now.Unix(),
-		}, user.Id,
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer:    user.Name,
+		ExpiresAt: now.Add(12 * time.Hour).Unix(),
+		IssuedAt:  now.Unix(),
+		Id:        strconv.Itoa(user.Id),
 	})
 	accessToken, err := token.SignedString([]byte(signingKey))
 	if err != nil {
@@ -58,19 +59,33 @@ func (s *AuthService) GenerateToken(username, password string) ([]string, error)
 
 	rToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.StandardClaims{
 		Issuer:    user.Name,
-		ExpiresAt: now.Add(12 * time.Hour).Unix(),
+		ExpiresAt: now.Add(36 * time.Hour).Unix(),
 		IssuedAt:  now.Unix(),
 	})
-	refreshToken, err := rToken.SignedString([]byte(signingKey))
+	refreshToken, err := rToken.SignedString([]byte(reSigningKey))
 	if err != nil {
+		return nil, err
+	}
+
+	uuid, err := uuid.NewUUID()
+	if err != nil {
+		return nil, err
+	}
+	session := todo.Session{
+		UserId:       user.Id,
+		RefreshToken: refreshToken,
+		Fingerprint:  uuid,
+		UserAgent:    userAgent,
+	}
+	if err := s.repo.CreateSession(session); err != nil {
 		return nil, err
 	}
 
 	return []string{accessToken, refreshToken}, nil
 }
 
-func (s *AuthService) ParseToken(accessToken string) (int, error) {
-	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+func (s *AuthService) ParseToken(accessToken string) (*jwt.StandardClaims, error) {
+	token, err := jwt.ParseWithClaims(accessToken, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
 		}
@@ -78,19 +93,27 @@ func (s *AuthService) ParseToken(accessToken string) (int, error) {
 		return []byte(signingKey), nil
 	})
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	claims, ok := token.Claims.(*tokenClaims)
+	claims, ok := token.Claims.(*jwt.StandardClaims)
 	if !ok {
-		return 0, errors.New("token claims are not found")
+		return nil, errors.New("token claims are not found")
 	}
 
-	return claims.UserId, nil
+	return claims, nil
+}
+
+func (s *AuthService) RefreshToken(token string) (*jwt.StandardClaims, error) {
+	claims, err := s.ParseToken(token)
+	if err != nil {
+		return nil, err
+	}
+
+	return claims, nil
 }
 
 func generatePasswordHash(password string) string {
 	hash, _ := bcrypt.GenerateFromPassword([]byte(password), cost)
-
 	return string(hash)
 }

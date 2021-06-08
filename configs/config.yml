@@ -7,7 +7,8 @@ swagger:
   version: "1.0"
 
 jwt:
-  signingKey: "qrkjk#4#%35FSFJlja#4353KSFjH"  
+  signingKey: "qrkjk#4#%35FSFJlja#4353KSFjH"
+  resigningKey: "qrkjk#4#%refresh35FSFJlja#4353KSFjH"
 
 password:  
   cost: 10

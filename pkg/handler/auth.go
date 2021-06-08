@@ -50,7 +50,6 @@ func (h *Handler) signUp(c *gin.Context) {
 // @Failure default {object} HTTPError
 // @Router /auth/sign-in [post]
 func (h *Handler) signIn(c *gin.Context) {
-
 	var input todo.SignInInput
 
 	if err := c.BindJSON(&input); err != nil {
@@ -58,7 +57,7 @@ func (h *Handler) signIn(c *gin.Context) {
 		return
 	}
 
-	token, err := h.services.GenerateToken(input.UserName, input.Password)
+	token, err := h.services.GenerateToken(input.UserName, input.Password, "asdasd")
 	if err != nil {
 		newResponseError(c, http.StatusInternalServerError, err)
 		return
@@ -68,5 +67,22 @@ func (h *Handler) signIn(c *gin.Context) {
 		"accessToken":  token[0],
 		"refreshToken": token[1],
 	})
+}
 
+func (h *Handler) refresh(c *gin.Context) {
+	var input todo.RefreshTokenInput
+
+	if err := c.BindJSON(&input); err != nil {
+		newResponseError(c, http.StatusBadRequest, errors.New("invalid input body"))
+	}
+
+	claims, err := h.services.RefreshToken(input.RefreshToken)
+	if err != nil {
+		newResponseError(c, http.StatusUnauthorized, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"claims": claims,
+	})
 }

@@ -31,3 +31,9 @@ func (r *AuthPostgres) GetUser(username string) (todo.User, error) {
 	err := r.db.Get(&user, query, username)
 	return user, err
 }
+
+func (r *AuthPostgres) CreateSession(input todo.Session) error {
+	query := fmt.Sprintf("INSERT INTO %s (user_id, fingerprint, refresh_token) VALUES ($1, $2, $3)", usersSessionsTable)
+	_, err := r.db.Exec(query, input.UserId, input.Fingerprint, input.RefreshToken)
+	return err
+}
