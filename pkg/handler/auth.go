@@ -56,8 +56,8 @@ func (h *Handler) signIn(c *gin.Context) {
 		newResponseError(c, http.StatusBadRequest, errors.New("invalid input body"))
 		return
 	}
-
-	token, err := h.services.GenerateToken(input.UserName, input.Password, "asdasd")
+	userAgent := c.Request.Header.Get("User-Agent")
+	token, err := h.services.GenerateToken(input.UserName, input.Password, userAgent)
 	if err != nil {
 		newResponseError(c, http.StatusInternalServerError, err)
 		return

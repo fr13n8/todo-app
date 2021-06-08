@@ -93,12 +93,17 @@ func TestHandler_signUp(t *testing.T) {
 }
 
 func TestHandler_signIn(t *testing.T) {
-	type mockBehavior func(s *mockservice.MockAuthorization, user todo.SignInInput)
+	type input struct {
+		user      todo.SignInInput
+		userAgent string
+	}
+
+	type mockBehavior func(s *mockservice.MockAuthorization, input input)
 
 	testTable := []struct {
 		name                 string
 		inputBody            string
-		inputUser            todo.SignInInput
+		input                input
 		mockBehavior         mockBehavior
 		expectedStatusCode   int
 		expectedResponseBody string
@@ -106,12 +111,15 @@ func TestHandler_signIn(t *testing.T) {
 		{
 			name:      "OK",
 			inputBody: `{"username": "test", "password": "test"}`,
-			inputUser: todo.SignInInput{
-				UserName: "test",
-				Password: "test",
+			input: input{
+				user: todo.SignInInput{
+					UserName: "test",
+					Password: "test",
+				},
+				userAgent: "test",
 			},
-			mockBehavior: func(r *mockservice.MockAuthorization, user todo.SignInInput) {
-				r.EXPECT().GenerateToken(user.UserName, user.Password).Return([]string{"token", "token1"}, nil)
+			mockBehavior: func(r *mockservice.MockAuthorization, input input) {
+				r.EXPECT().GenerateToken(input.user.UserName, input.user.Password, input.userAgent).Return([]string{"token", "token1"}, nil)
 			},
 			expectedStatusCode:   200,
 			expectedResponseBody: `{"accessToken":"token","refreshToken":"token1"}`,
@@ -119,19 +127,22 @@ func TestHandler_signIn(t *testing.T) {
 		{
 			name:                 "Empty fields",
 			inputBody:            `{"username": "test"}`,
-			mockBehavior:         func(r *mockservice.MockAuthorization, user todo.SignInInput) {},
+			mockBehavior:         func(r *mockservice.MockAuthorization, input input) {},
 			expectedStatusCode:   400,
 			expectedResponseBody: `{"message":"invalid input body"}`,
 		},
 		{
 			name:      "service failure",
 			inputBody: `{"username": "test", "password": "test"}`,
-			inputUser: todo.SignInInput{
-				UserName: "test",
-				Password: "test",
+			input: input{
+				user: todo.SignInInput{
+					UserName: "test",
+					Password: "test",
+				},
+				userAgent: "test",
 			},
-			mockBehavior: func(r *mockservice.MockAuthorization, user todo.SignInInput) {
-				r.EXPECT().GenerateToken(user.UserName, user.Password).Return(nil, errors.New("service failure"))
+			mockBehavior: func(r *mockservice.MockAuthorization, input input) {
+				r.EXPECT().GenerateToken(input.user.UserName, input.user.Password, input.userAgent).Return(nil, errors.New("service failure"))
 			},
 			expectedStatusCode:   500,
 			expectedResponseBody: `{"message":"service failure"}`,
@@ -144,7 +155,7 @@ func TestHandler_signIn(t *testing.T) {
 			defer c.Finish()
 
 			auth := mockservice.NewMockAuthorization(c)
-			testCase.mockBehavior(auth, testCase.inputUser)
+			testCase.mockBehavior(auth, testCase.input)
 
 			s := &service.Service{
 				Authorization: auth,
@@ -156,7 +167,7 @@ func TestHandler_signIn(t *testing.T) {
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("POST", "/sign-in", bytes.NewBufferString(testCase.inputBody))
-
+			req.Header.Add("User-Agent", testCase.input.userAgent)
 			r.ServeHTTP(w, req)
 
 			assert.Equal(t, w.Code, testCase.expectedStatusCode)
