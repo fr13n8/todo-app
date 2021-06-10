@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/fr13n8/todo-app"
 	"github.com/gin-gonic/gin"
@@ -37,6 +38,11 @@ func (h *Handler) signUp(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"id": id})
 }
 
+type AuthResponse struct {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+}
+
 // @Summary SignIn
 // @Tags auth
 // @Description user login
@@ -44,7 +50,7 @@ func (h *Handler) signUp(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param input body todo.SignInInput true "credentials"
-// @Success 200 {string} string "token"
+// @Success 200 {object} AuthResponse
 // @Failure 400,404 {object} HTTPError
 // @Failure 500 {object} HTTPError
 // @Failure default {object} HTTPError
@@ -63,12 +69,24 @@ func (h *Handler) signIn(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"accessToken":  token[0],
-		"refreshToken": token[1],
+	c.JSON(http.StatusOK, AuthResponse{
+		AccessToken:  token[0],
+		RefreshToken: token[1],
 	})
 }
 
+// @Summary Refresh
+// @Tags auth
+// @Description refresh JWT token
+// @ID refresh
+// @Accept  json
+// @Produce  json
+// @Param input body todo.RefreshTokenInput true "refresh token"
+// @Success 200 {string} string "token"
+// @Failure 400,404 {object} HTTPError
+// @Failure 500 {object} HTTPError
+// @Failure default {object} HTTPError
+// @Router /auth/refresh [post]
 func (h *Handler) refresh(c *gin.Context) {
 	var input todo.RefreshTokenInput
 
@@ -76,7 +94,21 @@ func (h *Handler) refresh(c *gin.Context) {
 		newResponseError(c, http.StatusBadRequest, errors.New("invalid input body"))
 	}
 
-	claims, err := h.services.RefreshToken(input.RefreshToken)
+	header := c.GetHeader(authorizationHeader)
+
+	if header == "" {
+		newResponseError(c, http.StatusUnauthorized, errors.New("empty auth token header"))
+		return
+	}
+
+	splitToken := strings.Split(header, "Bearer ")
+	if len(splitToken) != 2 {
+		newResponseError(c, http.StatusUnauthorized, errors.New("broken auth token"))
+		return
+	}
+	token := splitToken[1]
+
+	claims, err := h.services.RefreshToken(input.RefreshToken, token)
 	if err != nil {
 		newResponseError(c, http.StatusUnauthorized, err)
 		return

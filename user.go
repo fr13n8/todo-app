@@ -29,5 +29,5 @@ type Session struct {
 	UserId       int       `json:"user_id" db:"user_id"`
 	RefreshToken string    `json:"refresh_token" db:"refresh_token"`
 	UserAgent    string    `json:"user_agent" db:"user_agent"`
-	Fingerprint  uuid.UUID `json:"fingerprint" db:"fingerprint"`
+	UUID         uuid.UUID `json:"uuid" db:"uuid"`
 }

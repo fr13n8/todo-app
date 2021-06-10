@@ -95,18 +95,18 @@ func (mr *MockAuthorizationMockRecorder) ParseToken(token interface{}) *gomock.C
 }
 
 // RefreshToken mocks base method.
-func (m *MockAuthorization) RefreshToken(token string) (*jwt.StandardClaims, error) {
+func (m *MockAuthorization) RefreshToken(reToken, accToken string) ([]string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RefreshToken", token)
-	ret0, _ := ret[0].(*jwt.StandardClaims)
+	ret := m.ctrl.Call(m, "RefreshToken", reToken, accToken)
+	ret0, _ := ret[0].([]string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // RefreshToken indicates an expected call of RefreshToken.
-func (mr *MockAuthorizationMockRecorder) RefreshToken(token interface{}) *gomock.Call {
+func (mr *MockAuthorizationMockRecorder) RefreshToken(reToken, accToken interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshToken", reflect.TypeOf((*MockAuthorization)(nil).RefreshToken), token)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshToken", reflect.TypeOf((*MockAuthorization)(nil).RefreshToken), reToken, accToken)
 }
 
 // MockTodoList is a mock of TodoList interface.

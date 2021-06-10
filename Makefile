@@ -12,3 +12,6 @@ migrate_up:
 
 migrate_down:
 	migrate -path ./schema -database 'postgres://postgres:1234@localhost:5436/postgres?sslmode=disable' down
+
+swag:
+	swag init -g .\cmd\main.go

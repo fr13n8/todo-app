@@ -1,4 +1,11 @@
 definitions:
+  handler.AuthResponse:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+    type: object
   handler.HTTPError:
     properties:
       message:
@@ -51,6 +58,11 @@ definitions:
         type: string
     required:
     - title
+    type: object
+  todo.RefreshTokenInput:
+    properties:
+      refresh_token:
+        type: string
     type: object
   todo.SignInInput:
     properties:
@@ -510,6 +522,45 @@ paths:
       summary: Get item by id
       tags:
       - items
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: refresh JWT token
+      operationId: refresh
+      parameters:
+      - description: refresh token
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/todo.RefreshTokenInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: token
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.HTTPError'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.HTTPError'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.HTTPError'
+      summary: Refresh
+      tags:
+      - auth
   /auth/sign-in:
     post:
       consumes:
@@ -527,9 +578,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: token
+          description: OK
           schema:
-            type: string
+            $ref: '#/definitions/handler.AuthResponse'
         "400":
           description: Bad Request
           schema:

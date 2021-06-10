@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/fr13n8/todo-app"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -33,7 +34,21 @@ func (r *AuthPostgres) GetUser(username string) (todo.User, error) {
 }
 
 func (r *AuthPostgres) CreateSession(input todo.Session) error {
-	query := fmt.Sprintf("INSERT INTO %s (user_id, fingerprint, refresh_token, uagent) VALUES ($1, $2, $3, $4)", usersSessionsTable)
-	_, err := r.db.Exec(query, input.UserId, input.Fingerprint, input.RefreshToken, input.UserAgent)
+	query := fmt.Sprintf("INSERT INTO %s (user_id, uuid, refresh_token, uagent) VALUES ($1, $2, $3, $4)", usersSessionsTable)
+	_, err := r.db.Exec(query, input.UserId, input.UUID, input.RefreshToken, input.UserAgent)
 	return err
+}
+
+func (r *AuthPostgres) GetSessionsByUserId(userId int) ([]todo.Session, error) {
+	var sessions []todo.Session
+	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id=$1", usersSessionsTable)
+	err := r.db.Get(&sessions, query, userId)
+	return sessions, err
+}
+
+func (r *AuthPostgres) GetSessionByUUID(uuid uuid.UUID) (todo.Session, error) {
+	var session todo.Session
+	query := fmt.Sprintf("SELECT * FROM %s WHERE uuid=$1", usersSessionsTable)
+	err := r.db.Get(&session, query, uuid)
+	return session, err
 }

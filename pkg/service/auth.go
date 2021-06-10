@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -14,9 +15,8 @@ import (
 )
 
 var (
-	cost         = viper.GetInt("password.cost")
-	signingKey   = viper.GetString("jwt.signingKey")
-	reSigningKey = viper.GetString("jwt.resigningKey")
+	cost       = viper.GetInt("password.cost")
+	signingKey = viper.GetString("jwt.signingKey")
 )
 
 type AuthService struct {
@@ -47,7 +47,7 @@ func (s *AuthService) GenerateToken(username, password, userAgent string) ([]str
 	}
 	now := time.Now()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
-		Issuer:    user.Name,
+		Issuer:    user.UserName,
 		ExpiresAt: now.Add(12 * time.Hour).Unix(),
 		IssuedAt:  now.Unix(),
 		Id:        strconv.Itoa(user.Id),
@@ -58,11 +58,11 @@ func (s *AuthService) GenerateToken(username, password, userAgent string) ([]str
 	}
 
 	rToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.StandardClaims{
-		Issuer:    user.Name,
+		Issuer:    user.UserName,
 		ExpiresAt: now.Add(36 * time.Hour).Unix(),
 		IssuedAt:  now.Unix(),
 	})
-	refreshToken, err := rToken.SignedString([]byte(reSigningKey))
+	refreshToken, err := rToken.SignedString([]byte(signingKey))
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func (s *AuthService) GenerateToken(username, password, userAgent string) ([]str
 	session := todo.Session{
 		UserId:       user.Id,
 		RefreshToken: refreshToken,
-		Fingerprint:  uuid,
+		UUID:         uuid,
 		UserAgent:    userAgent,
 	}
 	if err := s.repo.CreateSession(session); err != nil {
@@ -104,13 +104,29 @@ func (s *AuthService) ParseToken(accessToken string) (*jwt.StandardClaims, error
 	return claims, nil
 }
 
-func (s *AuthService) RefreshToken(token string) (*jwt.StandardClaims, error) {
-	claims, err := s.ParseToken(token)
+func (s *AuthService) RefreshToken(reToken, accToken string) ([]string, error) {
+	reClaims, err := s.ParseToken(reToken)
 	if err != nil {
 		return nil, err
 	}
 
-	return claims, nil
+	accClaims, err := s.ParseToken(accToken)
+	if err != nil {
+		return nil, errors.New("invalid refresh token")
+	}
+
+	if _, err = s.repo.GetUser(reClaims.Issuer); err != nil {
+		return nil, err
+	}
+
+	if reClaims.ExpiresAt < time.Now().Unix() {
+		return nil, errors.New("refresh token expired")
+	}
+	if strings.Compare(accClaims.Issuer, reClaims.Issuer) != 0 {
+		return nil, errors.New("invalid tokens")
+	}
+
+	return []string{}, nil
 }
 
 func generatePasswordHash(password string) string {

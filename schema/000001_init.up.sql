@@ -40,7 +40,7 @@ CREATE TABLE users_sessions
 (
     id serial not null unique,
     user_id int references users(id) on delete cascade not null,
-    fingerprint varchar(255) not null,
+    uuid varchar(255) not null,
     uagent varchar(255) not null,
     refresh_token varchar(255) not null
 );
