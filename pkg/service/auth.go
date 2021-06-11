@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -59,7 +58,7 @@ func (s *AuthService) GenerateToken(username, password, userAgent string) ([]str
 
 	rToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.StandardClaims{
 		Issuer:    user.UserName,
-		ExpiresAt: now.Add(36 * time.Hour).Unix(),
+		ExpiresAt: now.Add(1 * time.Minute).Unix(),
 		IssuedAt:  now.Unix(),
 	})
 	refreshToken, err := rToken.SignedString([]byte(signingKey))
@@ -104,26 +103,22 @@ func (s *AuthService) ParseToken(accessToken string) (*jwt.StandardClaims, error
 	return claims, nil
 }
 
-func (s *AuthService) RefreshToken(reToken, accToken string) ([]string, error) {
-	reClaims, err := s.ParseToken(reToken)
+func (s *AuthService) RefreshToken(token string) ([]string, error) {
+	claims, err := s.ParseToken(token)
 	if err != nil {
 		return nil, err
 	}
 
-	accClaims, err := s.ParseToken(accToken)
 	if err != nil {
 		return nil, errors.New("invalid refresh token")
 	}
 
-	if _, err = s.repo.GetUser(reClaims.Issuer); err != nil {
+	if _, err = s.repo.GetUser(claims.Issuer); err != nil {
 		return nil, err
 	}
 
-	if reClaims.ExpiresAt < time.Now().Unix() {
+	if claims.ExpiresAt < time.Now().Unix() {
 		return nil, errors.New("refresh token expired")
-	}
-	if strings.Compare(accClaims.Issuer, reClaims.Issuer) != 0 {
-		return nil, errors.New("invalid tokens")
 	}
 
 	return []string{}, nil

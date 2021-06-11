@@ -3,7 +3,6 @@ package handler
 import (
 	"errors"
 	"net/http"
-	"strings"
 
 	"github.com/fr13n8/todo-app"
 	"github.com/gin-gonic/gin"
@@ -94,21 +93,7 @@ func (h *Handler) refresh(c *gin.Context) {
 		newResponseError(c, http.StatusBadRequest, errors.New("invalid input body"))
 	}
 
-	header := c.GetHeader(authorizationHeader)
-
-	if header == "" {
-		newResponseError(c, http.StatusUnauthorized, errors.New("empty auth token header"))
-		return
-	}
-
-	splitToken := strings.Split(header, "Bearer ")
-	if len(splitToken) != 2 {
-		newResponseError(c, http.StatusUnauthorized, errors.New("broken auth token"))
-		return
-	}
-	token := splitToken[1]
-
-	claims, err := h.services.RefreshToken(input.RefreshToken, token)
+	claims, err := h.services.RefreshToken(input.RefreshToken)
 	if err != nil {
 		newResponseError(c, http.StatusUnauthorized, err)
 		return
