@@ -11,7 +11,6 @@
     "repository": "https://github.com/fr13n8/todo-app",
     "scripts": {},
     "env": {},
-    "image": "heroku/go",
     "addons": [{
         "plan": "heroku-postgresql",
         "options": {
