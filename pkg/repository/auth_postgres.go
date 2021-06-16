@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/fr13n8/todo-app"
-	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -42,11 +41,14 @@ func (r *AuthPostgres) CreateSession(input todo.Session) error {
 func (r *AuthPostgres) GetSessionsByUserId(userId int) ([]todo.Session, error) {
 	var sessions []todo.Session
 	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id=$1", usersSessionsTable)
-	err := r.db.Get(&sessions, query, userId)
-	return sessions, err
+	if err := r.db.Select(&sessions, query, userId); err != nil {
+		return nil, err
+	}
+
+	return sessions, nil
 }
 
-func (r *AuthPostgres) GetSessionByUUID(uuid uuid.UUID) (todo.Session, error) {
+func (r *AuthPostgres) GetSessionByUUID(uuid string) (todo.Session, error) {
 	var session todo.Session
 	query := fmt.Sprintf("SELECT * FROM %s WHERE uuid=$1", usersSessionsTable)
 	err := r.db.Get(&session, query, uuid)

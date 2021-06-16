@@ -179,11 +179,6 @@ func TestTodoItemPostgres_GetById(t *testing.T) {
 				userId: 1,
 				itemId: 1,
 			},
-			want: todo.Item{
-				Title:       "title",
-				Description: "description",
-				Done:        false,
-			},
 			mockBehavior: func(input input) {
 				rows := sqlmock.NewRows([]string{"id", "title", "description", "done"})
 

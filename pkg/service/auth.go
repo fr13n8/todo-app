@@ -57,7 +57,7 @@ func (s *AuthService) SignInUser(username, password, userAgent string) ([]string
 	session := todo.Session{
 		UserId:       user.Id,
 		RefreshToken: tokens[1],
-		UUID:         uuid,
+		UUID:         uuid.String(),
 		UserAgent:    userAgent,
 	}
 	if err := s.repo.CreateSession(session); err != nil {
