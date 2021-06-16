@@ -13,19 +13,19 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - uses: akhileshns/heroku-deploy@v3.12.12
-      with:
-        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-        heroku_app_name: "go-todo-app-backend"
-        heroku_email: "ovsepanrik@gmail.com"
-
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.15
+        go-version: 1.16
 
     - name: Build
       run: go build -v ./...
 
     - name: Test
       run: go test -v ./...
+    
+    - uses: akhileshns/heroku-deploy@v3.12.12
+      with:
+        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+        heroku_app_name: "go-todo-app-backend"
+        heroku_email: "ovsepanrik@gmail.com"
