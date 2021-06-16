@@ -19,5 +19,5 @@ type SignUpInput struct {
 }
 
 type RefreshTokenInput struct {
-	RefreshToken string `json:"refresh_token"`
+	RefreshToken string `json:"refresh_token" binding:"required"`
 }

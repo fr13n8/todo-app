@@ -65,18 +65,18 @@ func (mr *MockAuthorizationMockRecorder) CreateUser(user interface{}) *gomock.Ca
 }
 
 // GenerateToken mocks base method.
-func (m *MockAuthorization) GenerateToken(username, password, userAgent string) ([]string, error) {
+func (m *MockAuthorization) GenerateToken(user todo.User) ([]string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GenerateToken", username, password, userAgent)
+	ret := m.ctrl.Call(m, "GenerateToken", user)
 	ret0, _ := ret[0].([]string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GenerateToken indicates an expected call of GenerateToken.
-func (mr *MockAuthorizationMockRecorder) GenerateToken(username, password, userAgent interface{}) *gomock.Call {
+func (mr *MockAuthorizationMockRecorder) GenerateToken(user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateToken", reflect.TypeOf((*MockAuthorization)(nil).GenerateToken), username, password, userAgent)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateToken", reflect.TypeOf((*MockAuthorization)(nil).GenerateToken), user)
 }
 
 // ParseToken mocks base method.
@@ -107,6 +107,21 @@ func (m *MockAuthorization) RefreshToken(token string) ([]string, error) {
 func (mr *MockAuthorizationMockRecorder) RefreshToken(token interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshToken", reflect.TypeOf((*MockAuthorization)(nil).RefreshToken), token)
+}
+
+// SignInUser mocks base method.
+func (m *MockAuthorization) SignInUser(username, password, userAgent string) ([]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SignInUser", username, password, userAgent)
+	ret0, _ := ret[0].([]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SignInUser indicates an expected call of SignInUser.
+func (mr *MockAuthorizationMockRecorder) SignInUser(username, password, userAgent interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignInUser", reflect.TypeOf((*MockAuthorization)(nil).SignInUser), username, password, userAgent)
 }
 
 // MockTodoList is a mock of TodoList interface.

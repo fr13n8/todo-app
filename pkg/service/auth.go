@@ -35,7 +35,7 @@ func (s *AuthService) CreateSession(input todo.Session) error {
 	return s.repo.CreateSession(input)
 }
 
-func (s *AuthService) GenerateToken(username, password, userAgent string) ([]string, error) {
+func (s *AuthService) SignInUser(username, password, userAgent string) ([]string, error) {
 	user, err := s.repo.GetUser(username)
 	if err != nil {
 		return nil, err
@@ -44,6 +44,31 @@ func (s *AuthService) GenerateToken(username, password, userAgent string) ([]str
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 		return nil, err
 	}
+
+	tokens, err := s.GenerateToken(user)
+	if err != nil {
+		return nil, err
+	}
+
+	uuid, err := uuid.NewUUID()
+	if err != nil {
+		return nil, err
+	}
+	session := todo.Session{
+		UserId:       user.Id,
+		RefreshToken: tokens[1],
+		UUID:         uuid,
+		UserAgent:    userAgent,
+	}
+	if err := s.repo.CreateSession(session); err != nil {
+		return nil, err
+	}
+
+	return tokens, nil
+}
+
+func (s *AuthService) GenerateToken(user todo.User) ([]string, error) {
+
 	now := time.Now()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		Issuer:    user.UserName,
@@ -63,20 +88,6 @@ func (s *AuthService) GenerateToken(username, password, userAgent string) ([]str
 	})
 	refreshToken, err := rToken.SignedString([]byte(signingKey))
 	if err != nil {
-		return nil, err
-	}
-
-	uuid, err := uuid.NewUUID()
-	if err != nil {
-		return nil, err
-	}
-	session := todo.Session{
-		UserId:       user.Id,
-		RefreshToken: refreshToken,
-		UUID:         uuid,
-		UserAgent:    userAgent,
-	}
-	if err := s.repo.CreateSession(session); err != nil {
 		return nil, err
 	}
 
@@ -109,19 +120,21 @@ func (s *AuthService) RefreshToken(token string) ([]string, error) {
 		return nil, err
 	}
 
+	user, err := s.repo.GetUser(claims.Issuer)
 	if err != nil {
 		return nil, errors.New("invalid refresh token")
-	}
-
-	if _, err = s.repo.GetUser(claims.Issuer); err != nil {
-		return nil, err
 	}
 
 	if claims.ExpiresAt < time.Now().Unix() {
 		return nil, errors.New("refresh token expired")
 	}
 
-	return []string{}, nil
+	tokens, err := s.GenerateToken(user)
+	if err != nil {
+		return nil, err
+	}
+
+	return tokens, nil
 }
 
 func generatePasswordHash(password string) string {

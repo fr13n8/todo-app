@@ -10,7 +10,8 @@ import (
 
 type Authorization interface {
 	CreateUser(user todo.SignUpInput) (int, error)
-	GenerateToken(username, password, userAgent string) ([]string, error)
+	GenerateToken(user todo.User) ([]string, error)
+	SignInUser(username, password, userAgent string) ([]string, error)
 	ParseToken(token string) (*jwt.StandardClaims, error)
 	RefreshToken(token string) ([]string, error)
 	CreateSession(input todo.Session) error

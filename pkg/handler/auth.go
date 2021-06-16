@@ -62,15 +62,15 @@ func (h *Handler) signIn(c *gin.Context) {
 		return
 	}
 	userAgent := c.Request.Header.Get("User-Agent")
-	token, err := h.services.GenerateToken(input.UserName, input.Password, userAgent)
+	tokens, err := h.services.SignInUser(input.UserName, input.Password, userAgent)
 	if err != nil {
 		newResponseError(c, http.StatusInternalServerError, err)
 		return
 	}
 
 	c.JSON(http.StatusOK, AuthResponse{
-		AccessToken:  token[0],
-		RefreshToken: token[1],
+		AccessToken:  tokens[0],
+		RefreshToken: tokens[1],
 	})
 }
 
@@ -86,20 +86,22 @@ func (h *Handler) signIn(c *gin.Context) {
 // @Failure 500 {object} HTTPError
 // @Failure default {object} HTTPError
 // @Router /auth/refresh [post]
-func (h *Handler) refresh(c *gin.Context) {
+func (h *Handler) refreshToken(c *gin.Context) {
 	var input todo.RefreshTokenInput
 
 	if err := c.BindJSON(&input); err != nil {
 		newResponseError(c, http.StatusBadRequest, errors.New("invalid input body"))
+		return
 	}
 
-	claims, err := h.services.RefreshToken(input.RefreshToken)
+	tokens, err := h.services.RefreshToken(input.RefreshToken)
 	if err != nil {
 		newResponseError(c, http.StatusUnauthorized, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"claims": claims,
+	c.JSON(http.StatusOK, AuthResponse{
+		AccessToken:  tokens[0],
+		RefreshToken: tokens[1],
 	})
 }
