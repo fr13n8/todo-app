@@ -1,0 +1,17 @@
+{
+    "name": "go-todo-app-backend",
+    "scripts": {
+    },
+    "env": {
+    },
+    "formation": {
+    },
+    "addons": [
+  
+    ],
+    "buildpacks": [
+      {
+        "url": "heroku/go"
+      }
+    ]
+  }
