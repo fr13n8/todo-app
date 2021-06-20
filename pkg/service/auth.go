@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/fr13n8/todo-app"
 	"github.com/fr13n8/todo-app/pkg/repository"
+	"github.com/fr13n8/todo-app/structs"
 	"github.com/google/uuid"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
@@ -26,12 +26,12 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
 }
 
-func (s *AuthService) CreateUser(user todo.SignUpInput) (int, error) {
+func (s *AuthService) CreateUser(user structs.SignUpInput) (int, error) {
 	user.Password = generatePasswordHash(user.Password)
 	return s.repo.CreateUser(user)
 }
 
-func (s *AuthService) CreateSession(input todo.Session) error {
+func (s *AuthService) CreateSession(input structs.Session) error {
 	return s.repo.CreateSession(input)
 }
 
@@ -54,7 +54,7 @@ func (s *AuthService) SignInUser(username, password, userAgent string) ([]string
 	if err != nil {
 		return nil, err
 	}
-	session := todo.Session{
+	session := structs.Session{
 		UserId:       user.Id,
 		RefreshToken: tokens[1],
 		UUID:         uuid.String(),
@@ -67,7 +67,7 @@ func (s *AuthService) SignInUser(username, password, userAgent string) ([]string
 	return tokens, nil
 }
 
-func (s *AuthService) GenerateToken(user todo.User) ([]string, error) {
+func (s *AuthService) GenerateToken(user structs.User) ([]string, error) {
 
 	now := time.Now()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{

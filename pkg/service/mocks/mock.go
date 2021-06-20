@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	todo "github.com/fr13n8/todo-app"
+	structs "github.com/fr13n8/todo-app/structs"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -36,7 +36,7 @@ func (m *MockAuthorization) EXPECT() *MockAuthorizationMockRecorder {
 }
 
 // CreateSession mocks base method.
-func (m *MockAuthorization) CreateSession(input todo.Session) error {
+func (m *MockAuthorization) CreateSession(input structs.Session) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateSession", input)
 	ret0, _ := ret[0].(error)
@@ -50,7 +50,7 @@ func (mr *MockAuthorizationMockRecorder) CreateSession(input interface{}) *gomoc
 }
 
 // CreateUser mocks base method.
-func (m *MockAuthorization) CreateUser(user todo.SignUpInput) (int, error) {
+func (m *MockAuthorization) CreateUser(user structs.SignUpInput) (int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateUser", user)
 	ret0, _ := ret[0].(int)
@@ -65,7 +65,7 @@ func (mr *MockAuthorizationMockRecorder) CreateUser(user interface{}) *gomock.Ca
 }
 
 // GenerateToken mocks base method.
-func (m *MockAuthorization) GenerateToken(user todo.User) ([]string, error) {
+func (m *MockAuthorization) GenerateToken(user structs.User) ([]string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GenerateToken", user)
 	ret0, _ := ret[0].([]string)
@@ -148,7 +148,7 @@ func (m *MockTodoList) EXPECT() *MockTodoListMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockTodoList) Create(userId int, list todo.List) (int, error) {
+func (m *MockTodoList) Create(userId int, list structs.List) (int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", userId, list)
 	ret0, _ := ret[0].(int)
@@ -177,10 +177,10 @@ func (mr *MockTodoListMockRecorder) Delete(listId, userId interface{}) *gomock.C
 }
 
 // GetAll mocks base method.
-func (m *MockTodoList) GetAll(userId int) ([]todo.List, error) {
+func (m *MockTodoList) GetAll(userId int) ([]structs.List, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", userId)
-	ret0, _ := ret[0].([]todo.List)
+	ret0, _ := ret[0].([]structs.List)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -192,10 +192,10 @@ func (mr *MockTodoListMockRecorder) GetAll(userId interface{}) *gomock.Call {
 }
 
 // GetById mocks base method.
-func (m *MockTodoList) GetById(listId, userId int) (todo.List, error) {
+func (m *MockTodoList) GetById(listId, userId int) (structs.List, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetById", listId, userId)
-	ret0, _ := ret[0].(todo.List)
+	ret0, _ := ret[0].(structs.List)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -207,7 +207,7 @@ func (mr *MockTodoListMockRecorder) GetById(listId, userId interface{}) *gomock.
 }
 
 // Update mocks base method.
-func (m *MockTodoList) Update(listId, userId int, list todo.UpdateListInput) error {
+func (m *MockTodoList) Update(listId, userId int, list structs.UpdateListInput) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update", listId, userId, list)
 	ret0, _ := ret[0].(error)
@@ -244,7 +244,7 @@ func (m *MockTodoItem) EXPECT() *MockTodoItemMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockTodoItem) Create(listId, userId int, input todo.Item) (int, error) {
+func (m *MockTodoItem) Create(listId, userId int, input structs.Item) (int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", listId, userId, input)
 	ret0, _ := ret[0].(int)
@@ -273,10 +273,10 @@ func (mr *MockTodoItemMockRecorder) Delete(userId, itemId interface{}) *gomock.C
 }
 
 // GetAll mocks base method.
-func (m *MockTodoItem) GetAll(listId, userId int) ([]todo.Item, error) {
+func (m *MockTodoItem) GetAll(listId, userId int) ([]structs.Item, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", listId, userId)
-	ret0, _ := ret[0].([]todo.Item)
+	ret0, _ := ret[0].([]structs.Item)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -288,10 +288,10 @@ func (mr *MockTodoItemMockRecorder) GetAll(listId, userId interface{}) *gomock.C
 }
 
 // GetById mocks base method.
-func (m *MockTodoItem) GetById(userId, itemId int) (todo.Item, error) {
+func (m *MockTodoItem) GetById(userId, itemId int) (structs.Item, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetById", userId, itemId)
-	ret0, _ := ret[0].(todo.Item)
+	ret0, _ := ret[0].(structs.Item)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -303,7 +303,7 @@ func (mr *MockTodoItemMockRecorder) GetById(userId, itemId interface{}) *gomock.
 }
 
 // Update mocks base method.
-func (m *MockTodoItem) Update(userId, itemId int, input todo.UpdateItemInput) error {
+func (m *MockTodoItem) Update(userId, itemId int, input structs.UpdateItemInput) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update", userId, itemId, input)
 	ret0, _ := ret[0].(error)

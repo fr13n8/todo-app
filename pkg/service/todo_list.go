@@ -3,8 +3,8 @@ package service
 import (
 	"errors"
 
-	"github.com/fr13n8/todo-app"
 	"github.com/fr13n8/todo-app/pkg/repository"
+	"github.com/fr13n8/todo-app/structs"
 )
 
 type TodoListService struct {
@@ -15,15 +15,15 @@ func NewTodoListService(repo repository.TodoList) *TodoListService {
 	return &TodoListService{repo: repo}
 }
 
-func (s *TodoListService) Create(userId int, list todo.List) (int, error) {
+func (s *TodoListService) Create(userId int, list structs.List) (int, error) {
 	return s.repo.Create(userId, list)
 }
 
-func (s *TodoListService) GetAll(userId int) ([]todo.List, error) {
+func (s *TodoListService) GetAll(userId int) ([]structs.List, error) {
 	return s.repo.GetAll(userId)
 }
 
-func (s *TodoListService) GetById(listId int, userId int) (todo.List, error) {
+func (s *TodoListService) GetById(listId int, userId int) (structs.List, error) {
 	return s.repo.GetById(listId, userId)
 }
 
@@ -34,7 +34,7 @@ func (s *TodoListService) Delete(listId int, userId int) error {
 	return s.repo.Delete(listId, userId)
 }
 
-func (s *TodoListService) Update(listId int, userId int, input todo.UpdateListInput) error {
+func (s *TodoListService) Update(listId int, userId int, input structs.UpdateListInput) error {
 	if _, err := s.repo.GetById(listId, userId); err != nil {
 		return errors.New("record not found")
 	}
