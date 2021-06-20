@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/fr13n8/todo-app"
+	"github.com/fr13n8/todo-app/structs"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,7 +16,7 @@ import (
 // @ID create-list
 // @Accept  json
 // @Produce  json
-// @Param input body todo.List true "list info"
+// @Param input body structs.List true "list info"
 // @Success 200 {integer} integer 1
 // @Failure 400,404 {object} HTTPError
 // @Failure 500 {object} HTTPError
@@ -28,7 +28,7 @@ func (h *Handler) createList(c *gin.Context) {
 		return
 	}
 
-	var input todo.List
+	var input structs.List
 	if err := c.BindJSON(&input); err != nil {
 		newResponseError(c, http.StatusBadRequest, errors.New("invalid input body"))
 		return
@@ -44,7 +44,7 @@ func (h *Handler) createList(c *gin.Context) {
 }
 
 type getAllListResponse struct {
-	Data []todo.List `json:"data"`
+	Data []structs.List `json:"data"`
 }
 
 // @Summary Get All Lists
@@ -77,7 +77,7 @@ func (h *Handler) getAllList(c *gin.Context) {
 }
 
 type getListResponse struct {
-	Data todo.List `json:"data"`
+	Data structs.List `json:"data"`
 }
 
 // @Summary Get List By Id
@@ -123,14 +123,14 @@ func (h *Handler) getListById(c *gin.Context) {
 // @ID update-list
 // @Accept  json
 // @Produce  json
-// @Param input body todo.UpdateListInput true "list info"
+// @Param input body structs.UpdateListInput true "list info"
 // @Success 200 {string} string Ok
 // @Failure 400,404 {object} HTTPError
 // @Failure 500 {object} HTTPError
 // @Failure default {object} HTTPError
 // @Router /api/lists [put]
 func (h *Handler) updateList(c *gin.Context) {
-	var input todo.UpdateListInput
+	var input structs.UpdateListInput
 	userId, err := getUserId(c)
 	if err != nil {
 		return

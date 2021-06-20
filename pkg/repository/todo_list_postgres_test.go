@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/fr13n8/todo-app"
+	"github.com/fr13n8/todo-app/structs"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,7 +23,7 @@ func TestTodoListPostgres_Create(t *testing.T) {
 
 	type input struct {
 		userId int
-		list   todo.List
+		list   structs.List
 	}
 
 	type mockBehavior func(input input, id int)
@@ -39,7 +39,7 @@ func TestTodoListPostgres_Create(t *testing.T) {
 			name: "Ok",
 			input: input{
 				userId: 1,
-				list: todo.List{
+				list: structs.List{
 					Id:          1,
 					Title:       "Test title",
 					Description: "Test description",
@@ -65,7 +65,7 @@ func TestTodoListPostgres_Create(t *testing.T) {
 			name: "Empty fields",
 			input: input{
 				userId: 1,
-				list: todo.List{
+				list: structs.List{
 					Title:       "",
 					Description: "description",
 				},
@@ -101,7 +101,7 @@ func TestTodoListPostgres_Create(t *testing.T) {
 			},
 			input: input{
 				userId: 1,
-				list: todo.List{
+				list: structs.List{
 					Title:       "title",
 					Description: "description",
 				},
@@ -147,7 +147,7 @@ func TestTodoListPostgres_GetById(t *testing.T) {
 		wantErr      bool
 		input        input
 		mockBehavior mockBehavior
-		want         todo.List
+		want         structs.List
 	}{
 		{
 			name: "Ok",
@@ -155,7 +155,7 @@ func TestTodoListPostgres_GetById(t *testing.T) {
 				listId: 1,
 				userId: 1,
 			},
-			want: todo.List{
+			want: structs.List{
 				Id:          1,
 				Title:       "title",
 				Description: "description",
@@ -226,14 +226,14 @@ func TestTodoListPostgres_GetAll(t *testing.T) {
 		input        input
 		mockBehavior mockBehavior
 		wantErr      bool
-		want         []todo.List
+		want         []structs.List
 	}{
 		{
 			name: "Ok",
 			input: input{
 				userId: 1,
 			},
-			want: []todo.List{
+			want: []structs.List{
 				{
 					Id:          1,
 					Title:       "title",
@@ -377,7 +377,7 @@ func TestTodoListPostgres_Update(t *testing.T) {
 	type input struct {
 		listId int
 		userId int
-		list   todo.UpdateListInput
+		list   structs.UpdateListInput
 	}
 
 	type mockBehavior func(input)
@@ -393,7 +393,7 @@ func TestTodoListPostgres_Update(t *testing.T) {
 			input: input{
 				userId: 1,
 				listId: 1,
-				list: todo.UpdateListInput{
+				list: structs.UpdateListInput{
 					Title:       stringPointer("title"),
 					Description: stringPointer("description"),
 				},
@@ -407,7 +407,7 @@ func TestTodoListPostgres_Update(t *testing.T) {
 		{
 			name: "OK_WithoutDescription",
 			input: input{
-				list: todo.UpdateListInput{
+				list: structs.UpdateListInput{
 					Title: stringPointer("title"),
 				},
 				listId: 1,
@@ -422,7 +422,7 @@ func TestTodoListPostgres_Update(t *testing.T) {
 		{
 			name: "OK_WithoutTitle",
 			input: input{
-				list: todo.UpdateListInput{
+				list: structs.UpdateListInput{
 					Description: stringPointer("description"),
 				},
 				listId: 1,

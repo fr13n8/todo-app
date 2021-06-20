@@ -1,30 +1,30 @@
 package repository
 
 import (
-	"github.com/fr13n8/todo-app"
+	"github.com/fr13n8/todo-app/structs"
 	"github.com/jmoiron/sqlx"
 )
 
 type Authorization interface {
-	CreateUser(user todo.SignUpInput) (int, error)
-	GetUser(username string) (todo.User, error)
-	CreateSession(input todo.Session) error
+	CreateUser(user structs.SignUpInput) (int, error)
+	GetUser(username string) (structs.User, error)
+	CreateSession(input structs.Session) error
 }
 
 type TodoList interface {
-	Create(userId int, list todo.List) (int, error)
-	GetAll(userId int) ([]todo.List, error)
-	GetById(listId int, userId int) (todo.List, error)
+	Create(userId int, list structs.List) (int, error)
+	GetAll(userId int) ([]structs.List, error)
+	GetById(listId int, userId int) (structs.List, error)
 	Delete(listId int, userId int) error
-	Update(listId int, userId int, input todo.UpdateListInput) error
+	Update(listId int, userId int, input structs.UpdateListInput) error
 }
 
 type TodoItem interface {
-	Create(listId int, input todo.Item) (int, error)
-	GetAll(listId int, userId int) ([]todo.Item, error)
-	GetById(userId int, itemId int) (todo.Item, error)
+	Create(listId int, input structs.Item) (int, error)
+	GetAll(listId int, userId int) ([]structs.Item, error)
+	GetById(userId int, itemId int) (structs.Item, error)
 	Delete(userId int, itemId int) error
-	Update(userId int, itemId int, input todo.UpdateItemInput) error
+	Update(userId int, itemId int, input structs.UpdateItemInput) error
 }
 
 type Repository struct {

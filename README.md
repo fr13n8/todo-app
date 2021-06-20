@@ -52,3 +52,7 @@ make migrate_down
 ```properties
 make swag
 ```
+- Generate mocks
+```properties
+cd pkg/service && go generate
+```

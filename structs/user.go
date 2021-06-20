@@ -1,4 +1,4 @@
-package todo
+package structs
 
 type User struct {
 	Id       int    `json:"id" db:"id"`

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/fr13n8/todo-app"
+	"github.com/fr13n8/todo-app/structs"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,7 +23,7 @@ func TestTodoItemPostgres_Create(t *testing.T) {
 
 	type input struct {
 		listId int
-		item   todo.Item
+		item   structs.Item
 	}
 	type mockBehavior func(input input, id int)
 
@@ -38,7 +38,7 @@ func TestTodoItemPostgres_Create(t *testing.T) {
 			name: "OK",
 			input: input{
 				listId: 1,
-				item: todo.Item{
+				item: structs.Item{
 					Id:          1,
 					Title:       "Test title",
 					Description: "Test description",
@@ -64,7 +64,7 @@ func TestTodoItemPostgres_Create(t *testing.T) {
 			name: "Empty Fields",
 			input: input{
 				listId: 1,
-				item: todo.Item{
+				item: structs.Item{
 					Title:       "",
 					Description: "description",
 				},
@@ -85,7 +85,7 @@ func TestTodoItemPostgres_Create(t *testing.T) {
 			name: "Failed 2nd Insert",
 			input: input{
 				listId: 1,
-				item: todo.Item{
+				item: structs.Item{
 					Id:          1,
 					Title:       "title",
 					Description: "description",
@@ -146,7 +146,7 @@ func TestTodoItemPostgres_GetById(t *testing.T) {
 		name         string
 		input        input
 		mockBehavior mockBehavior
-		want         todo.Item
+		want         structs.Item
 		wantErr      bool
 	}{
 		{
@@ -155,7 +155,7 @@ func TestTodoItemPostgres_GetById(t *testing.T) {
 				userId: 1,
 				itemId: 1,
 			},
-			want: todo.Item{
+			want: structs.Item{
 				Id:          1,
 				Title:       "title",
 				Description: "description",
@@ -232,7 +232,7 @@ func TestTodoItemPostgres_GetAll(t *testing.T) {
 		input        input
 		wantErr      bool
 		mockBehavior mockBehavior
-		want         []todo.Item
+		want         []structs.Item
 	}{
 		{
 			name: "OK",
@@ -253,7 +253,7 @@ func TestTodoItemPostgres_GetAll(t *testing.T) {
 					WithArgs(input.listId, input.userId).
 					WillReturnRows(rows)
 			},
-			want: []todo.Item{
+			want: []structs.Item{
 				{
 					Id:          1,
 					Title:       "title",
@@ -389,7 +389,7 @@ func TestTodoItemPostgres_Update(t *testing.T) {
 	r := NewTodoItemPostgres(db)
 
 	type input struct {
-		item   todo.UpdateItemInput
+		item   structs.UpdateItemInput
 		userId int
 		itemId int
 	}
@@ -405,7 +405,7 @@ func TestTodoItemPostgres_Update(t *testing.T) {
 		{
 			name: "Ok",
 			input: input{
-				item: todo.UpdateItemInput{
+				item: structs.UpdateItemInput{
 					Title:       stringPointer("new title"),
 					Description: stringPointer("new description"),
 					Done:        boolPointer(true),
@@ -429,7 +429,7 @@ func TestTodoItemPostgres_Update(t *testing.T) {
 			input: input{
 				itemId: 1,
 				userId: 1,
-				item: todo.UpdateItemInput{
+				item: structs.UpdateItemInput{
 					Title:       stringPointer("new title"),
 					Description: stringPointer("new description"),
 				},
@@ -445,7 +445,7 @@ func TestTodoItemPostgres_Update(t *testing.T) {
 			input: input{
 				itemId: 1,
 				userId: 1,
-				item: todo.UpdateItemInput{
+				item: structs.UpdateItemInput{
 					Title: stringPointer("new title"),
 				},
 			},

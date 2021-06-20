@@ -7,9 +7,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/fr13n8/todo-app"
 	"github.com/fr13n8/todo-app/pkg/service"
 	mockservice "github.com/fr13n8/todo-app/pkg/service/mocks"
+	"github.com/fr13n8/todo-app/structs"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -19,7 +19,7 @@ func TestHandler_createItem(t *testing.T) {
 	type input struct {
 		userId int
 		listId int
-		item   todo.Item
+		item   structs.Item
 	}
 
 	type mockBehavior func(r *mockservice.MockTodoItem, input input)
@@ -35,7 +35,7 @@ func TestHandler_createItem(t *testing.T) {
 		{
 			name: "Ok",
 			item: input{
-				item: todo.Item{
+				item: structs.Item{
 					Title:       "title",
 					Description: "description",
 				},
@@ -62,7 +62,7 @@ func TestHandler_createItem(t *testing.T) {
 		{
 			name: "Service failure",
 			item: input{
-				item: todo.Item{
+				item: structs.Item{
 					Title:       "title",
 					Description: "description",
 				},
@@ -129,7 +129,7 @@ func TestHandler_getAllItems(t *testing.T) {
 			expectedStatusCode:   200,
 			expectedResponseBody: `{"data":[{"id":1,"title":"title","description":"description","done":false},{"id":2,"title":"title2","description":"description2","done":true}]}`,
 			mockBehavior: func(r *mockservice.MockTodoItem, input input) {
-				r.EXPECT().GetAll(input.listId, input.userId).Return([]todo.Item{
+				r.EXPECT().GetAll(input.listId, input.userId).Return([]structs.Item{
 					{
 						Id:          1,
 						Title:       "title",
@@ -221,7 +221,7 @@ func TestHandler_getItemById(t *testing.T) {
 			expectedStatusCode:   200,
 			expectedResponseBody: `{"data":{"id":1,"title":"title","description":"description","done":false}}`,
 			mockBehavior: func(r *mockservice.MockTodoItem, input input) {
-				r.EXPECT().GetById(input.userId, input.itemId).Return(todo.Item{
+				r.EXPECT().GetById(input.userId, input.itemId).Return(structs.Item{
 					Id:          1,
 					Title:       "title",
 					Description: "description",
@@ -237,7 +237,7 @@ func TestHandler_getItemById(t *testing.T) {
 			expectedStatusCode:   500,
 			expectedResponseBody: `{"message":"item not found"}`,
 			mockBehavior: func(r *mockservice.MockTodoItem, input input) {
-				r.EXPECT().GetById(input.userId, input.itemId).Return((todo.Item{}), errors.New("item not found"))
+				r.EXPECT().GetById(input.userId, input.itemId).Return((structs.Item{}), errors.New("item not found"))
 			},
 		},
 		{
@@ -249,7 +249,7 @@ func TestHandler_getItemById(t *testing.T) {
 			expectedStatusCode:   500,
 			expectedResponseBody: `{"message":"service failure"}`,
 			mockBehavior: func(r *mockservice.MockTodoItem, input input) {
-				r.EXPECT().GetById(input.userId, input.itemId).Return((todo.Item{}), errors.New("service failure"))
+				r.EXPECT().GetById(input.userId, input.itemId).Return((structs.Item{}), errors.New("service failure"))
 			},
 		},
 	}
@@ -364,7 +364,7 @@ func TestHandler_updateItem(t *testing.T) {
 	type input struct {
 		userId int
 		itemId int
-		item   todo.UpdateItemInput
+		item   structs.UpdateItemInput
 	}
 
 	type mockBehavior func(s *mockservice.MockTodoItem, input input)
@@ -382,7 +382,7 @@ func TestHandler_updateItem(t *testing.T) {
 			input: input{
 				userId: 1,
 				itemId: 1,
-				item: todo.UpdateItemInput{
+				item: structs.UpdateItemInput{
 					Title:       stringPointer("title"),
 					Description: stringPointer("description"),
 					Done:        boolPointer(true),
@@ -400,7 +400,7 @@ func TestHandler_updateItem(t *testing.T) {
 			input: input{
 				userId: 1,
 				itemId: 1,
-				item: todo.UpdateItemInput{
+				item: structs.UpdateItemInput{
 					Description: stringPointer("description"),
 					Done:        boolPointer(true),
 				},
@@ -417,7 +417,7 @@ func TestHandler_updateItem(t *testing.T) {
 			input: input{
 				userId: 1,
 				itemId: 1,
-				item: todo.UpdateItemInput{
+				item: structs.UpdateItemInput{
 					Title: stringPointer("title"),
 					Done:  boolPointer(true),
 				},
@@ -434,7 +434,7 @@ func TestHandler_updateItem(t *testing.T) {
 			input: input{
 				userId: 1,
 				itemId: 1,
-				item: todo.UpdateItemInput{
+				item: structs.UpdateItemInput{
 					Description: stringPointer("description"),
 					Title:       stringPointer("title"),
 				},
@@ -451,7 +451,7 @@ func TestHandler_updateItem(t *testing.T) {
 			input: input{
 				userId: 1,
 				itemId: 1,
-				item: todo.UpdateItemInput{
+				item: structs.UpdateItemInput{
 					Description: stringPointer("description"),
 					Title:       stringPointer("title"),
 					Done:        boolPointer(true),
@@ -479,7 +479,7 @@ func TestHandler_updateItem(t *testing.T) {
 			input: input{
 				userId: 1,
 				itemId: 1,
-				item: todo.UpdateItemInput{
+				item: structs.UpdateItemInput{
 					Title:       stringPointer("title"),
 					Description: stringPointer("description"),
 					Done:        boolPointer(true),

@@ -15,27 +15,27 @@ definitions:
     properties:
       data:
         items:
-          $ref: '#/definitions/todo.Item'
+          $ref: '#/definitions/structs.Item'
         type: array
     type: object
   handler.getAllListResponse:
     properties:
       data:
         items:
-          $ref: '#/definitions/todo.List'
+          $ref: '#/definitions/structs.List'
         type: array
     type: object
   handler.getItemResponse:
     properties:
       data:
-        $ref: '#/definitions/todo.Item'
+        $ref: '#/definitions/structs.Item'
     type: object
   handler.getListResponse:
     properties:
       data:
-        $ref: '#/definitions/todo.List'
+        $ref: '#/definitions/structs.List'
     type: object
-  todo.Item:
+  structs.Item:
     properties:
       description:
         type: string
@@ -48,7 +48,7 @@ definitions:
     required:
     - title
     type: object
-  todo.List:
+  structs.List:
     properties:
       description:
         type: string
@@ -59,12 +59,14 @@ definitions:
     required:
     - title
     type: object
-  todo.RefreshTokenInput:
+  structs.RefreshTokenInput:
     properties:
       refresh_token:
         type: string
+    required:
+    - refresh_token
     type: object
-  todo.SignInInput:
+  structs.SignInInput:
     properties:
       password:
         type: string
@@ -74,7 +76,7 @@ definitions:
     - password
     - username
     type: object
-  todo.SignUpInput:
+  structs.SignUpInput:
     properties:
       name:
         type: string
@@ -87,7 +89,7 @@ definitions:
     - password
     - username
     type: object
-  todo.UpdateItemInput:
+  structs.UpdateItemInput:
     properties:
       description:
         type: string
@@ -96,7 +98,7 @@ definitions:
       title:
         type: string
     type: object
-  todo.UpdateListInput:
+  structs.UpdateListInput:
     properties:
       description:
         type: string
@@ -126,7 +128,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/todo.UpdateItemInput'
+          $ref: '#/definitions/structs.UpdateItemInput'
       produces:
       - application/json
       responses:
@@ -200,7 +202,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/todo.List'
+          $ref: '#/definitions/structs.List'
       produces:
       - application/json
       responses:
@@ -240,7 +242,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/todo.UpdateListInput'
+          $ref: '#/definitions/structs.UpdateListInput'
       produces:
       - application/json
       responses:
@@ -399,7 +401,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/todo.Item'
+          $ref: '#/definitions/structs.Item'
       - description: list id
         in: path
         name: id
@@ -534,7 +536,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/todo.RefreshTokenInput'
+          $ref: '#/definitions/structs.RefreshTokenInput'
       produces:
       - application/json
       responses:
@@ -573,7 +575,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/todo.SignInInput'
+          $ref: '#/definitions/structs.SignInInput'
       produces:
       - application/json
       responses:
@@ -612,7 +614,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/todo.SignUpInput'
+          $ref: '#/definitions/structs.SignUpInput'
       produces:
       - application/json
       responses:

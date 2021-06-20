@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/fr13n8/todo-app"
+	"github.com/fr13n8/todo-app/structs"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,14 +14,14 @@ import (
 // @ID create-account
 // @Accept  json
 // @Produce  json
-// @Param input body todo.SignUpInput true "account info"
+// @Param input body structs.SignUpInput true "account info"
 // @Success 200 {integer} integer 1
 // @Failure 400,404 {object} HTTPError
 // @Failure 500 {object} HTTPError
 // @Failure default {object} HTTPError
 // @Router /auth/sign-up [post]
 func (h *Handler) signUp(c *gin.Context) {
-	var input todo.SignUpInput
+	var input structs.SignUpInput
 
 	if err := c.BindJSON(&input); err != nil {
 		newResponseError(c, http.StatusBadRequest, errors.New("invalid input body"))
@@ -48,14 +48,14 @@ type AuthResponse struct {
 // @ID login
 // @Accept  json
 // @Produce  json
-// @Param input body todo.SignInInput true "credentials"
+// @Param input body structs.SignInInput true "credentials"
 // @Success 200 {object} AuthResponse
 // @Failure 400,404 {object} HTTPError
 // @Failure 500 {object} HTTPError
 // @Failure default {object} HTTPError
 // @Router /auth/sign-in [post]
 func (h *Handler) signIn(c *gin.Context) {
-	var input todo.SignInInput
+	var input structs.SignInInput
 
 	if err := c.BindJSON(&input); err != nil {
 		newResponseError(c, http.StatusBadRequest, errors.New("invalid input body"))
@@ -80,14 +80,14 @@ func (h *Handler) signIn(c *gin.Context) {
 // @ID refresh
 // @Accept  json
 // @Produce  json
-// @Param input body todo.RefreshTokenInput true "refresh token"
+// @Param input body structs.RefreshTokenInput true "refresh token"
 // @Success 200 {string} string "token"
 // @Failure 400,404 {object} HTTPError
 // @Failure 500 {object} HTTPError
 // @Failure default {object} HTTPError
 // @Router /auth/refresh [post]
 func (h *Handler) refreshToken(c *gin.Context) {
-	var input todo.RefreshTokenInput
+	var input structs.RefreshTokenInput
 
 	if err := c.BindJSON(&input); err != nil {
 		newResponseError(c, http.StatusBadRequest, errors.New("invalid input body"))

@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/fr13n8/todo-app"
+	"github.com/fr13n8/todo-app/structs"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"
 )
@@ -21,7 +21,7 @@ func TestTodoAuth_CreateUser(t *testing.T) {
 	r := NewAuthPostgres(db)
 
 	type input struct {
-		user todo.SignUpInput
+		user structs.SignUpInput
 	}
 
 	type mockBehavior func(input input, id int)
@@ -36,7 +36,7 @@ func TestTodoAuth_CreateUser(t *testing.T) {
 		{
 			name: "Ok",
 			input: input{
-				user: todo.SignUpInput{
+				user: structs.SignUpInput{
 					Name:     "name",
 					UserName: "username",
 					Password: "password",
@@ -53,7 +53,7 @@ func TestTodoAuth_CreateUser(t *testing.T) {
 		{
 			name: "Empty password field",
 			input: input{
-				user: todo.SignUpInput{
+				user: structs.SignUpInput{
 					Name:     "name",
 					UserName: "username",
 					Password: "",
@@ -70,7 +70,7 @@ func TestTodoAuth_CreateUser(t *testing.T) {
 		{
 			name: "Empty name field",
 			input: input{
-				user: todo.SignUpInput{
+				user: structs.SignUpInput{
 					Name:     "",
 					UserName: "username",
 					Password: "password",
@@ -87,7 +87,7 @@ func TestTodoAuth_CreateUser(t *testing.T) {
 		{
 			name: "Empty username field",
 			input: input{
-				user: todo.SignUpInput{
+				user: structs.SignUpInput{
 					Name:     "name",
 					UserName: "",
 					Password: "password",
@@ -105,7 +105,7 @@ func TestTodoAuth_CreateUser(t *testing.T) {
 			name:    "Empty fields",
 			wantErr: true,
 			input: input{
-				user: todo.SignUpInput{
+				user: structs.SignUpInput{
 					Name:     "",
 					UserName: "",
 					Password: "",
@@ -157,14 +157,14 @@ func TestTodoAuth_GetUser(t *testing.T) {
 		input        input
 		wantErr      bool
 		mockBehavior mockBehavior
-		want         todo.User
+		want         structs.User
 	}{
 		{
 			name: "Ok",
 			input: input{
 				username: "username",
 			},
-			want: todo.User{
+			want: structs.User{
 				Id:       1,
 				Name:     "name",
 				UserName: "username",
@@ -221,23 +221,23 @@ func TestTodoAuth_CreateSession(t *testing.T) {
 
 	r := NewAuthPostgres(db)
 
-	type mockBehavior func(input todo.Session)
+	type mockBehavior func(input structs.Session)
 
 	testTable := []struct {
 		name         string
-		input        todo.Session
+		input        structs.Session
 		wantErr      bool
 		mockBehavior mockBehavior
 	}{
 		{
 			name: "Ok",
-			input: todo.Session{
+			input: structs.Session{
 				UserId:       1,
 				RefreshToken: "refresh_token",
 				UserAgent:    "user_agent",
 				UUID:         "uuid",
 			},
-			mockBehavior: func(input todo.Session) {
+			mockBehavior: func(input structs.Session) {
 				mock.ExpectExec("INSERT INTO users_sessions").
 					WithArgs(input.UserId, input.UUID, input.RefreshToken, input.UserAgent).
 					WillReturnResult(sqlmock.NewResult(1, 1))
@@ -245,14 +245,14 @@ func TestTodoAuth_CreateSession(t *testing.T) {
 		},
 		{
 			name: "Empty userId field",
-			input: todo.Session{
+			input: structs.Session{
 				Id:           1,
 				RefreshToken: "refresh_token",
 				UserAgent:    "user_agent",
 				UUID:         "uuid",
 			},
 			wantErr: true,
-			mockBehavior: func(input todo.Session) {
+			mockBehavior: func(input structs.Session) {
 				mock.ExpectExec("INSERT INTO users_sessions").
 					WithArgs(input.UserId, input.UUID, input.RefreshToken, input.UserAgent).
 					WillReturnError(errors.New("invalid session"))
@@ -261,8 +261,8 @@ func TestTodoAuth_CreateSession(t *testing.T) {
 		{
 			name:    "Empty fields",
 			wantErr: true,
-			input:   todo.Session{},
-			mockBehavior: func(input todo.Session) {
+			input:   structs.Session{},
+			mockBehavior: func(input structs.Session) {
 				mock.ExpectExec("INSERT INTO users_sessions").
 					WithArgs(input.UserId, input.UUID, input.RefreshToken, input.UserAgent).
 					WillReturnError(errors.New("empty session"))
@@ -306,14 +306,14 @@ func TestTodoAuth_GetSessionsByUserId(t *testing.T) {
 		input        input
 		wantErr      bool
 		mockBehavior mockBehavior
-		want         []todo.Session
+		want         []structs.Session
 	}{
 		{
 			name: "Ok",
 			input: input{
 				id: 1,
 			},
-			want: []todo.Session{
+			want: []structs.Session{
 				{
 					Id:           1,
 					UserId:       1,
@@ -391,14 +391,14 @@ func TestTodoAuth_GetSessionByUUID(t *testing.T) {
 		input        input
 		wantErr      bool
 		mockBehavior mockBehavior
-		want         todo.Session
+		want         structs.Session
 	}{
 		{
 			name: "Ok",
 			input: input{
 				uuid: "uuid",
 			},
-			want: todo.Session{
+			want: structs.Session{
 				Id:           1,
 				UserId:       1,
 				RefreshToken: "refresh_token",

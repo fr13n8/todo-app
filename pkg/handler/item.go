@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/fr13n8/todo-app"
+	"github.com/fr13n8/todo-app/structs"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,7 +16,7 @@ import (
 // @ID create-item
 // @Accept  json
 // @Produce  json
-// @Param input body todo.Item true "item info"
+// @Param input body structs.Item true "item info"
 // @Param id path int true "list id"
 // @Success 200 {integer} integer 1
 // @Failure 400,404 {object} HTTPError
@@ -35,7 +35,7 @@ func (h *Handler) createItem(c *gin.Context) {
 		return
 	}
 
-	var input todo.Item
+	var input structs.Item
 	if err := c.BindJSON(&input); err != nil {
 		newResponseError(c, http.StatusBadRequest, errors.New("invalid input body"))
 		return
@@ -51,7 +51,7 @@ func (h *Handler) createItem(c *gin.Context) {
 }
 
 type getAllItemsResponse struct {
-	Data []todo.Item `json:"data"`
+	Data []structs.Item `json:"data"`
 }
 
 // @Summary Get All items
@@ -91,7 +91,7 @@ func (h *Handler) getAllItems(c *gin.Context) {
 }
 
 type getItemResponse struct {
-	Data todo.Item `json:"data"`
+	Data structs.Item `json:"data"`
 }
 
 // @Summary Get item by id
@@ -139,14 +139,14 @@ func (h *Handler) getItemById(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param id path int true "item id"
-// @Param input body todo.UpdateItemInput true "item info"
+// @Param input body structs.UpdateItemInput true "item info"
 // @Success 200 {string} string Ok
 // @Failure 400,404 {object} HTTPError
 // @Failure 500 {object} HTTPError
 // @Failure default {object} HTTPError
 // @Router /api/items/:id [put]
 func (h *Handler) updateItem(c *gin.Context) {
-	var input todo.UpdateItemInput
+	var input structs.UpdateItemInput
 	userId, err := getUserId(c)
 	if err != nil {
 		return

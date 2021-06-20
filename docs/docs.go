@@ -61,7 +61,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todo.UpdateItemInput"
+                            "$ref": "#/definitions/structs.UpdateItemInput"
                         }
                     }
                 ],
@@ -176,7 +176,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todo.UpdateListInput"
+                            "$ref": "#/definitions/structs.UpdateListInput"
                         }
                     }
                 ],
@@ -238,7 +238,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todo.List"
+                            "$ref": "#/definitions/structs.List"
                         }
                     }
                 ],
@@ -484,7 +484,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todo.Item"
+                            "$ref": "#/definitions/structs.Item"
                         }
                     },
                     {
@@ -686,7 +686,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todo.RefreshTokenInput"
+                            "$ref": "#/definitions/structs.RefreshTokenInput"
                         }
                     }
                 ],
@@ -745,7 +745,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todo.SignInInput"
+                            "$ref": "#/definitions/structs.SignInInput"
                         }
                     }
                 ],
@@ -804,7 +804,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todo.SignUpInput"
+                            "$ref": "#/definitions/structs.SignUpInput"
                         }
                     }
                 ],
@@ -869,7 +869,7 @@ var doc = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/todo.Item"
+                        "$ref": "#/definitions/structs.Item"
                     }
                 }
             }
@@ -880,7 +880,7 @@ var doc = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/todo.List"
+                        "$ref": "#/definitions/structs.List"
                     }
                 }
             }
@@ -889,7 +889,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/todo.Item"
+                    "$ref": "#/definitions/structs.Item"
                 }
             }
         },
@@ -897,11 +897,11 @@ var doc = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/todo.List"
+                    "$ref": "#/definitions/structs.List"
                 }
             }
         },
-        "todo.Item": {
+        "structs.Item": {
             "type": "object",
             "required": [
                 "title"
@@ -921,7 +921,7 @@ var doc = `{
                 }
             }
         },
-        "todo.List": {
+        "structs.List": {
             "type": "object",
             "required": [
                 "title"
@@ -938,15 +938,18 @@ var doc = `{
                 }
             }
         },
-        "todo.RefreshTokenInput": {
+        "structs.RefreshTokenInput": {
             "type": "object",
+            "required": [
+                "refresh_token"
+            ],
             "properties": {
                 "refresh_token": {
                     "type": "string"
                 }
             }
         },
-        "todo.SignInInput": {
+        "structs.SignInInput": {
             "type": "object",
             "required": [
                 "password",
@@ -961,7 +964,7 @@ var doc = `{
                 }
             }
         },
-        "todo.SignUpInput": {
+        "structs.SignUpInput": {
             "type": "object",
             "required": [
                 "name",
@@ -980,7 +983,7 @@ var doc = `{
                 }
             }
         },
-        "todo.UpdateItemInput": {
+        "structs.UpdateItemInput": {
             "type": "object",
             "properties": {
                 "description": {
@@ -994,7 +997,7 @@ var doc = `{
                 }
             }
         },
-        "todo.UpdateListInput": {
+        "structs.UpdateListInput": {
             "type": "object",
             "properties": {
                 "description": {

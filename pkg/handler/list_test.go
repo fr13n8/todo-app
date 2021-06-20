@@ -7,9 +7,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/fr13n8/todo-app"
 	"github.com/fr13n8/todo-app/pkg/service"
 	mockservice "github.com/fr13n8/todo-app/pkg/service/mocks"
+	"github.com/fr13n8/todo-app/structs"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -18,7 +18,7 @@ import (
 func TestHandler_createList(t *testing.T) {
 	type input struct {
 		userId int
-		list   todo.List
+		list   structs.List
 	}
 
 	type mockBehavior func(s *mockservice.MockTodoList, input input)
@@ -35,7 +35,7 @@ func TestHandler_createList(t *testing.T) {
 			name: "Ok",
 			input: input{
 				userId: 1,
-				list: todo.List{
+				list: structs.List{
 					Title:       "title",
 					Description: "description",
 				},
@@ -51,7 +51,7 @@ func TestHandler_createList(t *testing.T) {
 			name: "OK_WithoutDescription",
 			input: input{
 				userId: 1,
-				list: todo.List{
+				list: structs.List{
 					Title: "title",
 				},
 			},
@@ -75,7 +75,7 @@ func TestHandler_createList(t *testing.T) {
 			name: "Service failure",
 			input: input{
 				userId: 1,
-				list: todo.List{
+				list: structs.List{
 					Title:       "title",
 					Description: "description",
 				},
@@ -138,7 +138,7 @@ func TestHandler_getAllList(t *testing.T) {
 			expectedStatusCode:   200,
 			expectedResponseBody: `{"data":[{"id":1,"title":"title","description":"description"},{"id":2,"title":"title2","description":"description2"}]}`,
 			mockBehavior: func(r *mockservice.MockTodoList, input input) {
-				r.EXPECT().GetAll(input.userId).Return([]todo.List{
+				r.EXPECT().GetAll(input.userId).Return([]structs.List{
 					{
 						Id:          1,
 						Title:       "title",
@@ -227,7 +227,7 @@ func TestHandler_getListById(t *testing.T) {
 			expectedStatusCode:   200,
 			expectedResponseBody: `{"data":{"id":1,"title":"title","description":"description"}}`,
 			mockBehavior: func(r *mockservice.MockTodoList, input input) {
-				r.EXPECT().GetById(input.listId, input.userId).Return(todo.List{
+				r.EXPECT().GetById(input.listId, input.userId).Return(structs.List{
 					Id:          1,
 					Title:       "title",
 					Description: "description",
@@ -242,7 +242,7 @@ func TestHandler_getListById(t *testing.T) {
 			expectedStatusCode:   500,
 			expectedResponseBody: `{"message":"item not found"}`,
 			mockBehavior: func(r *mockservice.MockTodoList, input input) {
-				r.EXPECT().GetById(input.listId, input.userId).Return((todo.List{}), errors.New("item not found"))
+				r.EXPECT().GetById(input.listId, input.userId).Return((structs.List{}), errors.New("item not found"))
 			},
 		},
 		{
@@ -254,7 +254,7 @@ func TestHandler_getListById(t *testing.T) {
 			expectedStatusCode:   500,
 			expectedResponseBody: `{"message":"service failure"}`,
 			mockBehavior: func(r *mockservice.MockTodoList, input input) {
-				r.EXPECT().GetById(input.listId, input.userId).Return(todo.List{}, errors.New("service failure"))
+				r.EXPECT().GetById(input.listId, input.userId).Return(structs.List{}, errors.New("service failure"))
 			},
 		},
 	}
@@ -369,7 +369,7 @@ func TestHandler_updateList(t *testing.T) {
 	type input struct {
 		listId int
 		userId int
-		list   todo.UpdateListInput
+		list   structs.UpdateListInput
 	}
 
 	type mockBehavior func(mockservice *mockservice.MockTodoList, input input)
@@ -387,7 +387,7 @@ func TestHandler_updateList(t *testing.T) {
 			input: input{
 				userId: 1,
 				listId: 1,
-				list: todo.UpdateListInput{
+				list: structs.UpdateListInput{
 					Title:       stringPointer("title"),
 					Description: stringPointer("description"),
 				},
@@ -404,7 +404,7 @@ func TestHandler_updateList(t *testing.T) {
 			input: input{
 				userId: 1,
 				listId: 1,
-				list: todo.UpdateListInput{
+				list: structs.UpdateListInput{
 					Description: stringPointer("description"),
 				},
 			},
@@ -420,7 +420,7 @@ func TestHandler_updateList(t *testing.T) {
 			input: input{
 				userId: 1,
 				listId: 1,
-				list: todo.UpdateListInput{
+				list: structs.UpdateListInput{
 					Title: stringPointer("title"),
 				},
 			},
@@ -436,7 +436,7 @@ func TestHandler_updateList(t *testing.T) {
 			input: input{
 				userId: 1,
 				listId: 1,
-				list: todo.UpdateListInput{
+				list: structs.UpdateListInput{
 					Description: stringPointer("description"),
 					Title:       stringPointer("title"),
 				},
@@ -463,7 +463,7 @@ func TestHandler_updateList(t *testing.T) {
 			input: input{
 				userId: 1,
 				listId: 1,
-				list: todo.UpdateListInput{
+				list: structs.UpdateListInput{
 					Title:       stringPointer("title"),
 					Description: stringPointer("description"),
 				},

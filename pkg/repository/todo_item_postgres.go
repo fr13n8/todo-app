@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/fr13n8/todo-app"
+	"github.com/fr13n8/todo-app/structs"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -16,7 +16,7 @@ func NewTodoItemPostgres(db *sqlx.DB) *TodoItemPostgres {
 	return &TodoItemPostgres{db: db}
 }
 
-func (r *TodoItemPostgres) Create(listId int, input todo.Item) (int, error) {
+func (r *TodoItemPostgres) Create(listId int, input structs.Item) (int, error) {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return 0, err
@@ -46,8 +46,8 @@ func (r *TodoItemPostgres) Create(listId int, input todo.Item) (int, error) {
 	return itemId, tx.Commit()
 }
 
-func (r *TodoItemPostgres) GetAll(listId int, userId int) ([]todo.Item, error) {
-	var items []todo.Item
+func (r *TodoItemPostgres) GetAll(listId int, userId int) ([]structs.Item, error) {
+	var items []structs.Item
 
 	query := fmt.Sprintf(`SELECT ti.id, ti.title, ti.description, ti.done FROM %s ti 
 							INNER JOIN %s li on li.item_id=ti.id
@@ -60,8 +60,8 @@ func (r *TodoItemPostgres) GetAll(listId int, userId int) ([]todo.Item, error) {
 	return items, nil
 }
 
-func (r *TodoItemPostgres) GetById(userId int, itemId int) (todo.Item, error) {
-	var item todo.Item
+func (r *TodoItemPostgres) GetById(userId int, itemId int) (structs.Item, error) {
+	var item structs.Item
 
 	query := fmt.Sprintf(`SELECT ti.id, ti.title, ti.description, ti.done FROM %s ti 
 							INNER JOIN %s li on li.item_id=ti.id
@@ -84,7 +84,7 @@ func (r *TodoItemPostgres) Delete(userId int, itemId int) error {
 	return err
 }
 
-func (r *TodoItemPostgres) Update(userId int, itemId int, input todo.UpdateItemInput) error {
+func (r *TodoItemPostgres) Update(userId int, itemId int, input structs.UpdateItemInput) error {
 	setValues := make([]string, 0)
 	args := make([]interface{}, 0)
 	argId := 1

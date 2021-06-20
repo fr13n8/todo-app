@@ -41,7 +41,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todo.UpdateItemInput"
+                            "$ref": "#/definitions/structs.UpdateItemInput"
                         }
                     }
                 ],
@@ -156,7 +156,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todo.UpdateListInput"
+                            "$ref": "#/definitions/structs.UpdateListInput"
                         }
                     }
                 ],
@@ -218,7 +218,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todo.List"
+                            "$ref": "#/definitions/structs.List"
                         }
                     }
                 ],
@@ -464,7 +464,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todo.Item"
+                            "$ref": "#/definitions/structs.Item"
                         }
                     },
                     {
@@ -666,7 +666,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todo.RefreshTokenInput"
+                            "$ref": "#/definitions/structs.RefreshTokenInput"
                         }
                     }
                 ],
@@ -725,7 +725,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todo.SignInInput"
+                            "$ref": "#/definitions/structs.SignInInput"
                         }
                     }
                 ],
@@ -784,7 +784,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todo.SignUpInput"
+                            "$ref": "#/definitions/structs.SignUpInput"
                         }
                     }
                 ],
@@ -849,7 +849,7 @@
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/todo.Item"
+                        "$ref": "#/definitions/structs.Item"
                     }
                 }
             }
@@ -860,7 +860,7 @@
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/todo.List"
+                        "$ref": "#/definitions/structs.List"
                     }
                 }
             }
@@ -869,7 +869,7 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/todo.Item"
+                    "$ref": "#/definitions/structs.Item"
                 }
             }
         },
@@ -877,11 +877,11 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/todo.List"
+                    "$ref": "#/definitions/structs.List"
                 }
             }
         },
-        "todo.Item": {
+        "structs.Item": {
             "type": "object",
             "required": [
                 "title"
@@ -901,7 +901,7 @@
                 }
             }
         },
-        "todo.List": {
+        "structs.List": {
             "type": "object",
             "required": [
                 "title"
@@ -918,15 +918,18 @@
                 }
             }
         },
-        "todo.RefreshTokenInput": {
+        "structs.RefreshTokenInput": {
             "type": "object",
+            "required": [
+                "refresh_token"
+            ],
             "properties": {
                 "refresh_token": {
                     "type": "string"
                 }
             }
         },
-        "todo.SignInInput": {
+        "structs.SignInInput": {
             "type": "object",
             "required": [
                 "password",
@@ -941,7 +944,7 @@
                 }
             }
         },
-        "todo.SignUpInput": {
+        "structs.SignUpInput": {
             "type": "object",
             "required": [
                 "name",
@@ -960,7 +963,7 @@
                 }
             }
         },
-        "todo.UpdateItemInput": {
+        "structs.UpdateItemInput": {
             "type": "object",
             "properties": {
                 "description": {
@@ -974,7 +977,7 @@
                 }
             }
         },
-        "todo.UpdateListInput": {
+        "structs.UpdateListInput": {
             "type": "object",
             "properties": {
                 "description": {
